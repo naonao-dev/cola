@@ -46,14 +46,8 @@ enum class NFunctionType
 /** 获取当前代码所在的位置信息 */
 #define NAO_GET_LOCATE (std::string(__FILE__) + " | " + std::string(__FUNCTION__) + " | line = [" + ::std::to_string(__LINE__) + "]")
 
-
-/** 生成一个包含异常位置的 NStatus
- * 这里这样实现，是为了符合 NStatus 类似写法
- * */
-#define NErrStatus(info) NStatus(info)
-
 /** 返回异常信息和状态 */
-#define NAO_RETURN_ERROR_STATUS(info) return NErrStatus(info);
+#define NAO_RETURN_ERROR_STATUS(info) return NStatus(info);
 
 /** 根据条件判断是否返回错误状态 */
 #define NAO_RETURN_ERROR_STATUS_BY_CONDITION(cond, info) \
@@ -62,7 +56,7 @@ enum class NFunctionType
     }
 
 /** 不支持当前功能 */
-#define NAO_NO_SUPPORT return NErrStatus(NAO_FUNCTION_NO_SUPPORT);
+#define NAO_NO_SUPPORT return NStatus(NAO_FUNCTION_NO_SUPPORT);
 
 /** 定义为不能赋值和拷贝的对象类型 */
 #define NAO_NO_ALLOWED_COPY(CType)                 \

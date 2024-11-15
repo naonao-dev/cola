@@ -24,7 +24,7 @@ private:
     NStatus run() final;
     NStatus destroy() final;
 
-    NStatus addElementInfo(const std::set<DElementPtr>& dependElements, const std::string& name, NSize loop) final;
+    NStatus addElementInfo(const std::set<DElementPtr>& depends, const std::string& name, NSize loop) final;
 
     NStatus addManagers(DParamManagerPtr paramManager, DEventManagerPtr eventManager) final;
 

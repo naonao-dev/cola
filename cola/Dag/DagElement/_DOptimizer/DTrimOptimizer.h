@@ -5,7 +5,7 @@
  * @Date         : 2024-09-05 14:18:33
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-09-05 14:25:41
+ * @LastEditTime : 2024-11-15 13:11:05
  * @Copyright (c) 2024 by G, All Rights Reserved.
  **/
 #ifndef NAO_GTRIMOPTIMIZER_H
@@ -32,7 +32,7 @@ class DTrimOptimizer : public DOptimizer
         auto        graph   = buildGraph(elements, paths, 1, 0, 0);
 
         for (auto* cur : elements) {
-            NSize            idx = std::distance(elements.begin(), elements.find(cur));
+            NAO_ASSERT_NOT_NULL_THROW_ERROR(cur)
             DElementPtrArr candidates;
             for (NSize i = 0; i < cur->dependence_.size(); i++) {
                 NSize x = std::distance(elements.begin(), elements.find(cur->dependence_[i]));
@@ -40,14 +40,13 @@ class DTrimOptimizer : public DOptimizer
                     // 这里必须是 n^2 的循环
                     NSize y = std::distance(elements.begin(), elements.find(cur->dependence_[j]));
                     if (1 == graph[x][y]) {
-                        graph[x][idx] = 0;
                         candidates.push_back(cur->dependence_[i]);
                     }
                 }
             }
 
             for (auto* candidate : candidates) {
-                if (cur->removeDepend(candidate)) {
+                if (cur->removeDepend(candidate).isOK()) {
                     trimNum++;
                 }
             }

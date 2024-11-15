@@ -24,7 +24,7 @@ NStatus DParamManager::create(const std::string& key, NBool backtrace)
     if (result != params_map_.end()) {
         /* 如果是重复创建，则返回ok；非重复创建（类型不同）则返回err */
         auto param = result->second;
-        return (typeid(*param).name() == typeid(T).name()) ? NStatus() : NErrStatus("create [" + key + "] param duplicate");
+        return (typeid(*param).name() == typeid(T).name()) ? NStatus() : NStatus("create [" + key + "] param duplicate");
     }
 
     T* ptr = NAO_SAFE_MALLOC_NOBJECT(T)

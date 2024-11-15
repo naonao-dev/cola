@@ -5,7 +5,7 @@
  * @Date         : 2024-06-28 10:36:10
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-09-05 11:53:38
+ * @LastEditTime : 2024-11-15 11:38:23
  */
 #ifndef NAO_DPIPELINE_INL
 #define NAO_DPIPELINE_INL
@@ -17,7 +17,7 @@
 NAO_NAMESPACE_BEGIN
 
 template<typename T, c_enable_if_t<std::is_base_of<DElement, T>::value, int>>
-NStatus DPipeline::registerDElement(DElementPPtr elementRef, const DElementPtrSet& dependElements, const std::string& name, NSize loop)
+NStatus DPipeline::registerDElement(DElementPPtr elementRef, const DElementPtrSet& depends, const std::string& name, NSize loop)
 {
     NAO_FUNCTION_BEGIN
     NAO_ASSERT_INIT(false)
@@ -43,30 +43,30 @@ NStatus DPipeline::registerDElement(DElementPPtr elementRef, const DElementPtrSe
         NAO_RETURN_ERROR_STATUS("resister error type")
     }
 
-    status = innerRegister(*elementRef, dependElements, name, loop);
+    status = innerRegister(*elementRef, depends, name, loop);
     NAO_FUNCTION_END
 }
 
 template<typename TNode, c_enable_if_t<std::is_base_of<DNode, TNode>::value, int>>
-TNode* DPipeline::registerDNode(const DElementPtrSet& dependElements, const std::string& name, NSize loop)
+TNode* DPipeline::registerDNode(const DElementPtrSet& depends, const std::string& name, NSize loop)
 {
     DElementPtr node = nullptr;
-    NAO_THROW_EXCEPTION_BY_STATUS(registerGElement<TNode>(&node, dependElements, name, loop))
+    NAO_THROW_EXCEPTION_BY_STATUS(registerGElement<TNode>(&node, depends, name, loop))
     return (TNode*)node;
 }
 
 
 template<typename TNode, typename... Args, c_enable_if_t<std::is_base_of<DTemplateNode<Args...>, TNode>::value, int>>
-TNode* DPipeline::registerDNode(const DElementPtrSet& dependElements, Args... args)
+TNode* DPipeline::registerDNode(const DElementPtrSet& depends, Args... args)
 {
     DTemplateNodePtr<Args...> node = nullptr;
-    NAO_THROW_EXCEPTION_BY_STATUS(registerGElement<TNode>(&node, dependElements, args...))
+    NAO_THROW_EXCEPTION_BY_STATUS(registerGElement<TNode>(&node, depends, args...))
     return (TNode*)node;
 }
 
 
 template<typename TNode, typename... Args, c_enable_if_t<std::is_base_of<DTemplateNode<Args...>, TNode>::value, int>>
-NStatus DPipeline::registerDElement(DTemplateNodePtr<Args...>* elementRef, const DElementPtrSet& dependElements, Args... args)
+NStatus DPipeline::registerDElement(DTemplateNodePtr<Args...>* elementRef, const DElementPtrSet& depends, Args... args)
 {
     NAO_FUNCTION_BEGIN
     NAO_ASSERT_INIT(false)
@@ -75,30 +75,30 @@ NStatus DPipeline::registerDElement(DTemplateNodePtr<Args...>* elementRef, const
     (*elementRef) = new (std::nothrow) TNode(std::forward<Args&&>(args)...);
     NAO_ASSERT_NOT_NULL(*elementRef)
 
-    status = innerRegister(*elementRef, dependElements, NAO_EMPTY, NAO_DEFAULT_LOOP_TIMES);
+    status = innerRegister(*elementRef, depends, NAO_EMPTY, NAO_DEFAULT_LOOP_TIMES);
     NAO_FUNCTION_END
 }
 
 
 template<typename DFunction>
-NStatus DPipeline::registerDElement(DFunctionPPtr functionRef, const DElementPtrSet& dependElements, const std::string& name, NSize loop)
+NStatus DPipeline::registerDElement(DFunctionPPtr functionRef, const DElementPtrSet& depends, const std::string& name, NSize loop)
 {
     // 通过模板特化的方式，简化 DFunction 的注册方式
-    return this->registerDElement<DFunction>((DElementPtr*)(functionRef), dependElements, name, loop);
+    return this->registerDElement<DFunction>((DElementPtr*)(functionRef), depends, name, loop);
 }
 
 
 template<typename DFence>
-NStatus DPipeline::registerDElement(DFencePPtr fenceRef, const DElementPtrSet& dependElements, const std::string& name, NSize loop)
+NStatus DPipeline::registerDElement(DFencePPtr fenceRef, const DElementPtrSet& depends, const std::string& name, NSize loop)
 {
-    return this->registerDElement<DFence>((DElementPtr*)(fenceRef), dependElements, name, loop);
+    return this->registerDElement<DFence>((DElementPtr*)(fenceRef), depends, name, loop);
 }
 
 
 template<typename DCoordinator, NInt SIZE>
-NStatus DPipeline::registerDElement(DCoordinatorPPtr<SIZE> coordinatorRef, const DElementPtrSet& dependElements, const std::string& name, NSize loop)
+NStatus DPipeline::registerDElement(DCoordinatorPPtr<SIZE> coordinatorRef, const DElementPtrSet& depends, const std::string& name, NSize loop)
 {
-    return this->registerDElement<DCoordinator, SIZE>((DElementPtr*)(coordinatorRef), dependElements, name, loop);
+    return this->registerDElement<DCoordinator, SIZE>((DElementPtr*)(coordinatorRef), depends, name, loop);
 }
 
 template<typename TNode, typename... Args, c_enable_if_t<std::is_base_of<DNode, TNode>::value, int>>
@@ -128,14 +128,14 @@ TNode* DPipeline::createDNode(const DElementPtrSet& dependence, const std::strin
 
 
 template<typename TGroup, c_enable_if_t<std::is_base_of<DGroup, TGroup>::value, int>>
-TGroup* DPipeline::createDGroup(const DElementPtrArr& elements, const DElementPtrSet& dependElements, const std::string& name, NSize loop)
+TGroup* DPipeline::createDGroup(const DElementPtrArr& elements, const DElementPtrSet& depends, const std::string& name, NSize loop)
 {
     NAO_FUNCTION_BEGIN
     NAO_ASSERT_INIT_THROW_ERROR(false)
 
     // 如果不是所有的都非空，则创建失败
     NAO_THROW_EXCEPTION_BY_CONDITION(std::any_of(elements.begin(), elements.end(), [](DElementPtr element) { return (nullptr == element); }), "createGGroup elements have nullptr.")
-    NAO_THROW_EXCEPTION_BY_CONDITION(std::any_of(dependElements.begin(), dependElements.end(), [](DElementPtr element) { return (nullptr == element); }), "createGGroup dependElements have nullptr.")
+    NAO_THROW_EXCEPTION_BY_CONDITION(std::any_of(depends.begin(), depends.end(), [](DElementPtr element) { return (nullptr == element); }), "createGGroup depends have nullptr.")
 
     auto* group = NAO_SAFE_MALLOC_NOBJECT(TGroup)
     for (DElementPtr element : elements)
@@ -146,7 +146,7 @@ TGroup* DPipeline::createDGroup(const DElementPtrArr& elements, const DElementPt
     NAO_THROW_EXCEPTION_BY_STATUS(status)
 
     // 加入group的时候，是不设定manager信息的
-    status = group->addElementInfo(dependElements, name, loop);
+    status = group->addElementInfo(depends, name, loop);
     NAO_THROW_EXCEPTION_BY_STATUS(status)
 
     this->repository_.insert(group);

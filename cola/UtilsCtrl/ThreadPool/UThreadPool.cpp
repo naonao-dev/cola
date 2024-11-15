@@ -4,7 +4,7 @@
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-09-05 11:11:38
+ * @LastEditTime : 2024-11-15 14:40:14
  **/
 #include "UThreadPool.h"
 
@@ -23,8 +23,7 @@ UThreadPool::UThreadPool(NBool autoInit, const UThreadPoolConfig& config) noexce
 
 UThreadPool::~UThreadPool()
 {
-    this->config_.monitor_enable_ =
-        false;   // 在析构的时候，才释放监控线程。先释放监控线程，再释放其他的线程
+    this->config_.monitor_enable_ = false;   // 在析构的时候，才释放监控线程。先释放监控线程，再释放其他的线程
     if (monitor_thread_.joinable()) {
         monitor_thread_.join();
     }
@@ -61,8 +60,8 @@ NStatus UThreadPool::init()
         monitor_thread_ = std::thread(&UThreadPool::monitor, this);
     }
     thread_record_map_.clear();
-    thread_record_map_[(NSize)std::hash<std::thread::id>{}(std::this_thread::get_id())] =
-        NAO_MAIN_THREAD_ID;
+    thread_record_map_[(NSize)std::hash<std::thread::id>{}(std::this_thread::get_id())] = NAO_MAIN_THREAD_ID;
+    task_queue_.setup();
     primary_threads_.reserve(config_.default_thread_size_);
     for (int i = 0; i < config_.default_thread_size_; i++) {
         auto* pt = NAO_SAFE_MALLOC_NOBJECT(UThreadPrimary);   // 创建核心线程数
@@ -78,9 +77,8 @@ NStatus UThreadPool::init()
      */
     for (int i = 0; i < config_.default_thread_size_; i++) {
         status += primary_threads_[i]->init();
-        thread_record_map_[(NSize)std::hash<std::thread::id>{}(
-            primary_threads_[i]->thread_.get_id())] = i;
-    }
+        thread_record_map_[(NSize)std::hash<std::thread::id>{}(primary_threads_[i]->thread_.get_id())] = i;
+     }
     NAO_FUNCTION_CHECK_STATUS
 
     /**
@@ -108,16 +106,21 @@ NStatus UThreadPool::submit(const UTaskGroup& taskGroup, NMSec ttl)
     }
 
     // 计算最终运行时间信息
-    auto deadline = std::chrono::steady_clock::now() +
-                    std::chrono::milliseconds(std::min(taskGroup.getTtl(), ttl));
+    auto deadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(std::min(taskGroup.getTtl(), ttl));
 
     for (auto& fut : futures) {
         const auto& futStatus = fut.wait_until(deadline);
         switch (futStatus) {
-        case std::future_status::ready: break;   // 正常情况，直接返回了
-        case std::future_status::timeout: status += NErrStatus("thread status timeout"); break;
-        case std::future_status::deferred: status += NErrStatus("thread status deferred"); break;
-        default: status += NErrStatus("thread status unknown");
+        case std::future_status::ready:
+            break;   // 正常情况，直接返回了
+        case std::future_status::timeout:
+            status += NStatus("thread status timeout");
+            break;
+        case std::future_status::deferred:
+            status += NStatus("thread status deferred");
+            break;
+        default:
+            status += NStatus("thread status unknown");
         }
     }
 
@@ -129,8 +132,7 @@ NStatus UThreadPool::submit(const UTaskGroup& taskGroup, NMSec ttl)
 }
 
 
-NStatus UThreadPool::submit(NAO_DEFAULT_CONST_FUNCTION_REF func, NMSec ttl,
-                            NAO_CALLBACK_CONST_FUNCTION_REF onFinished)
+NStatus UThreadPool::submit(NAO_DEFAULT_CONST_FUNCTION_REF func, NMSec ttl, NAO_CALLBACK_CONST_FUNCTION_REF onFinished)
 {
     return submit(UTaskGroup(func, ttl, onFinished));
 }
@@ -172,7 +174,9 @@ NStatus UThreadPool::destroy()
         NAO_DELETE_PTR(pt)
     }
     primary_threads_.clear();
+
     // secondary 线程是智能指针，不需要delete
+    task_queue_.reset();
     for (auto& st : secondary_threads_) {
         status += st->destroy();
     }
@@ -202,9 +206,7 @@ NStatus UThreadPool::releaseSecondaryThread(NInt size)
     }
 
     NAO_RETURN_ERROR_STATUS_BY_CONDITION((size > secondary_threads_.size()),
-                                         "cannot release [" + std::to_string(size) +
-                                             "] secondary thread," + "only [" +
-                                             std::to_string(secondary_threads_.size()) + "] left.")
+                                         "cannot release [" + std::to_string(size) + "] secondary thread," + "only [" + std::to_string(secondary_threads_.size()) + "] left.")
 
     // 再标记几个需要删除的信息
     for (auto iter = secondary_threads_.begin(); iter != secondary_threads_.end() && size-- > 0;) {
@@ -219,10 +221,6 @@ NIndex UThreadPool::dispatch(NIndex origIndex)
 {
     NIndex realIndex = 0;
     if (NAO_DEFAULT_TASK_STRATEGY == origIndex) {
-        /**
-         * 如果是默认策略信息，在[0, default_thread_size_) 之间的，通过 thread 中queue来调度
-         * 在[default_thread_size_, max_thread_size_) 之间的，通过 pool 中的queue来调度
-         */
         realIndex = cur_index_++;
         if (cur_index_ >= config_.max_thread_size_ || cur_index_ < 0) {
             cur_index_ = 0;
@@ -240,15 +238,12 @@ NStatus UThreadPool::createSecondaryThread(NInt size)
 {
     NAO_FUNCTION_BEGIN
 
-    int leftSize =
-        (int)(config_.max_thread_size_ - config_.default_thread_size_ - secondary_threads_.size());
-    int realSize =
-        std::min(size, leftSize);   // 使用 realSize 来确保所有的线程数量之和，不会超过设定max值
+    int leftSize = (int)(config_.max_thread_size_ - config_.default_thread_size_ - secondary_threads_.size());
+    int realSize = std::min(size, leftSize);   // 使用 realSize 来确保所有的线程数量之和，不会超过设定max值
 
     NAO_LOCK_GUARD lock(st_mutex_);
     for (int i = 0; i < realSize; i++) {
-        auto ptr = NAO_MAKE_UNIQUE_NOBJECT(UThreadSecondary)
-                       ptr->setThreadPoolInfo(&task_queue_, &priority_task_queue_, &config_);
+        auto ptr = NAO_MAKE_UNIQUE_NOBJECT(UThreadSecondary) ptr->setThreadPoolInfo(&task_queue_, &priority_task_queue_, &config_);
         status += ptr->init();
         secondary_threads_.emplace_back(std::move(ptr));
     }
@@ -271,8 +266,7 @@ NVoid UThreadPool::monitor()
         }
 
         // 如果 primary线程都在执行，则表示忙碌
-        bool busy = !primary_threads_.empty() && std::all_of(primary_threads_.begin(), primary_threads_.end(),
-                                [](UThreadPrimaryPtr ptr) { return ptr && ptr->is_running_; });
+        bool busy = !primary_threads_.empty() && std::all_of(primary_threads_.begin(), primary_threads_.end(), [](UThreadPrimaryPtr ptr) { return ptr && ptr->is_running_; });
 
         NAO_LOCK_GUARD lock(st_mutex_);
         // 如果忙碌或者priority_task_queue_中有任务，则需要添加 secondary线程

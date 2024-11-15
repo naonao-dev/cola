@@ -25,7 +25,6 @@ protected:
 
     NStatus run() override;
 
-    NStatus afterRunCheck() override;
 
     /**
      * 记录当前 elements 数据信息

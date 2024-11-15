@@ -5,7 +5,7 @@
  * @Date         : 2024-08-12 13:47:40
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-08-12 13:52:31
+ * @LastEditTime : 2024-11-15 14:44:43
  * @Copyright (c) 2024 by G, All Rights Reserved.
  **/
 #include "DStaticEngine.h"
@@ -21,7 +21,7 @@ NStatus DStaticEngine::setup(const DSortedDElementPtrSet& elements)
     NSize          totalSize = 0;
     for (auto element : elements) {
         NAO_ASSERT_NOT_NULL(element)
-        element->beforeRun();
+        element->refresh();
         if (element->dependence_.empty()) {
             curArr.push_back(element);
             totalSize++;

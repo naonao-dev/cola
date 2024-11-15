@@ -151,6 +151,14 @@ public:
     DElementState getCurState() const;
 
     /**
+     * 删除一个依赖的节点信息
+     * @param element
+     * @return
+     * @notice 删除依赖关系之后，可能会出现 dag 无法连通的情况
+     */
+    NStatus removeDepend(DElement* element);
+
+    /**
      * 获取对应的ptr类型
      * @tparam T
      * @param ptr
@@ -260,12 +268,11 @@ protected:
     /** 使用者请勿复写private中的函数 **/
     /********************************/
 private:
-    /**
-     * run方法执行之前的执行函数
+   /**
+     * 恢复运行最初的信息
      * @return
      */
-    NVoid beforeRun();
-
+    NVoid refresh();
 
     /**
      * 判定当前的内容，是否需要异步执行
@@ -301,12 +308,12 @@ private:
 
     /**
      * 设置element信息
-     * @param dependElements
+     * @param depends
      * @param name
      * @param loop
      * @return
      */
-    virtual NStatus addElementInfo(const std::set<DElement*>& dependElements, const std::string& name, NSize loop);
+    virtual NStatus addElementInfo(const std::set<DElement*>& depends, const std::string& name, NSize loop);
 
     /**
      * 设置manager信息
@@ -416,13 +423,6 @@ private:
      * @return
      */
     NBool isDefaultBinding() const;
-
-    /**
-     * 删除一个依赖的节点信息
-     * @param element
-     * @return
-     */
-    NBool removeDepend(DElement* element);
 
 private:
     /** 状态相关信息 */

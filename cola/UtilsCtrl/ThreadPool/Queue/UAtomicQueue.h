@@ -1,10 +1,10 @@
 ﻿/**
- * @FilePath     : /cola/src/UtilsCtrl/ThreadPool/Queue/UAtomicQueue.h
+ * @FilePath     : /cola/cola/UtilsCtrl/ThreadPool/Queue/UAtomicQueue.h
  * @Description  : 设计了一个安全队列
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-20 19:51:32
+ * @LastEditTime : 2024-11-15 14:36:38
  **/
 #ifndef NAO_UATOMICQUEUE_H
 #define NAO_UATOMICQUEUE_H
@@ -89,7 +89,12 @@ public:
     std::unique_ptr<T> popWithTimeout(NMSec ms)
     {
         NAO_UNIQUE_LOCK lk(mutex_);
-        if (!cv_.wait_for(lk, std::chrono::milliseconds(ms), [this] { return !queue_.empty(); })) {
+        if (!cv_.wait_for(lk, std::chrono::milliseconds(ms),
+                          [this] { return (!queue_.empty()) || (!ready_flag_); })) {
+            return nullptr;
+        }
+
+        if (queue_.empty() || !ready_flag_) {
             return nullptr;
         }
 
@@ -147,10 +152,30 @@ public:
         return queue_.empty();
     }
 
+    /**
+     * 功能是通知所有的辅助线程停止工作
+     * @return
+     */
+    NVoid reset() {
+        ready_flag_ = false;
+        cv_.notify_all();
+    }
+
+
+    /**
+     * 初始化状态
+     * @return
+     */
+    NVoid setup() {
+        ready_flag_ = true;
+        queue_ = {};
+    }
+
     NAO_NO_ALLOWED_COPY(UAtomicQueue)
 
 private:
-    std::queue<std::unique_ptr<T>> queue_;
+    std::queue<std::unique_ptr<T>> queue_{};
+    NBool ready_flag_ { true };                  // 执行标记，主要用于快速释放 destroy 逻辑中，多个辅助线程等待的状态
 };
 
 NAO_NAMESPACE_END

@@ -81,12 +81,12 @@ NStatus DSingleton<T>::destroy()
 
 
 template<typename T>
-NStatus DSingleton<T>::addElementInfo(const std::set<DElementPtr>& dependElements, const std::string& name, NSize loop)
+NStatus DSingleton<T>::addElementInfo(const std::set<DElementPtr>& depends, const std::string& name, NSize loop)
 {
     NAO_FUNCTION_BEGIN
     NAO_ASSERT_INIT(false)
 
-    status = this->addDependDElements(dependElements);
+    status = this->addDependDElements(depends);
     NAO_FUNCTION_CHECK_STATUS
 
     // 这里，内部和外部均需要设定name信息
