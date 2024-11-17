@@ -5,7 +5,7 @@
  * @Date         : 2024-07-20 23:51:14
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-21 00:00:31
+ * @LastEditTime : 2024-11-17 12:24:10
  */
 #ifndef NAONAO_VLINEESTIMATOR_INL
 #define NAONAO_VLINEESTIMATOR_INL
@@ -50,7 +50,7 @@ void VLineParamEstimator<T>::calcError(std::vector<T> X, std::vector<T> Y)
     if (X.size() < 2 || Y.size() < 2 || X.size() != Y.size()) {
         exit(EXIT_FAILURE);
     }
-    mean_ = VLineParamEstimator::mean<T>(Y);
+    mean_ = Mean<T>(Y);
     NDouble yi;   // 用拟合后的曲线计算得到的yi
     for (NInt i = 0; i < X.size(); i++) {
         yi = 0;
@@ -80,7 +80,7 @@ bool VLineParamEstimator<T>::agree(T x, T y)
 };
 
 template<typename T>
-NDouble VLineParamEstimator<T>::mean(std::vector<T> Y)
+NDouble VLineParamEstimator<T>::Mean(std::vector<T> Y)
 {
     if (Y.size() < 2)
         exit(EXIT_FAILURE);

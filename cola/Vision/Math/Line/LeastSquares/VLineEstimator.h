@@ -89,7 +89,7 @@ public:
     * @Returns:
     * @Others:
     --------------------------------------------------------------------------------------------------*/
-    NDouble mean(std::vector<T> Y);
+    NDouble Mean(std::vector<T> Y);
 
 private:
     Eigen::VectorXd mat_;
