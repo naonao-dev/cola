@@ -5,7 +5,7 @@
  * @Date         : 2024-07-20 23:51:14
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-11-17 16:00:10
+ * @LastEditTime : 2024-11-17 16:54:38
  */
 #ifndef NAONAO_VLINEESTIMATOR_INL
 #define NAONAO_VLINEESTIMATOR_INL
@@ -18,8 +18,9 @@ NAO_VISION_NAMESPACE_BEGIN
 template<typename T>
 Eigen::VectorXd VLineParamEstimator<T>::LeastSquareMethod(std::vector<T> X, std::vector<T> Y, uint8_t orders)
 {
-    if (X.size() < 2 || Y.size() < 2 || X.size() != Y.size() || orders < 1)
+    if (X.size() < 2 || Y.size() < 2 || X.size() != Y.size() || orders < 1) {
         exit(EXIT_FAILURE);
+}
     order_ = orders;
     Eigen::Map<VectorX> sampleX(X.data(), X.size());   // 从STL数组转为EIGEN数组
     Eigen::Map<VectorX> sampleY(Y.data(), Y.size());
@@ -82,11 +83,13 @@ bool VLineParamEstimator<T>::agree(T x, T y)
 template<typename T>
 NDouble VLineParamEstimator<T>::mean(std::vector<T> Y)
 {
-    if (Y.size() < 2)
+    if (Y.size() < 2) {
         exit(EXIT_FAILURE);
+    }
     NDouble sum = 0.0;
-    for (NSize i = 0; i < Y.size(); i++)
+    for (NSize i = 0; i < Y.size(); i++) {
         sum += Y[i];
+    }
     sum = (sum / (Y.size() * 1.0));
     return sum;
 };
