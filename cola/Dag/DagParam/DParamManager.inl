@@ -11,6 +11,8 @@
 #ifndef NAO_DPARAMMANGER_INL
 #define NAO_DPARAMMANGER_INL
 
+#include <typeinfo>
+
 #include "DParamManager.h"
 
 NAO_NAMESPACE_BEGIN
@@ -20,11 +22,12 @@ NStatus DParamManager::create(const std::string& key, NBool backtrace)
 {
     NAO_FUNCTION_BEGIN
     NAO_LOCK_GUARD lock(this->mutex_);
-    auto           result = params_map_.find(key);
-    if (result != params_map_.end()) {
+    auto iter = params_map_.find(key);
+    if (iter != params_map_.end()) {
         /* 如果是重复创建，则返回ok；非重复创建（类型不同）则返回err */
-        auto param = result->second;
-        return (typeid(*param).name() == typeid(T).name()) ? NStatus() : NStatus("create [" + key + "] param duplicate");
+        auto param = iter->second;
+        return (typeid(*param).name() == typeid(T).name()) ?
+               NStatus() : NStatus("create [" + key + "] param duplicate");
     }
 
     T* ptr = NAO_SAFE_MALLOC_NOBJECT(T)
@@ -37,12 +40,17 @@ NStatus DParamManager::create(const std::string& key, NBool backtrace)
 template<typename T, c_enable_if_t<std::is_base_of<DParam, T>::value, int>>
 T* DParamManager::get(const std::string& key)
 {
-    auto result = params_map_.find(key);
-    if (result == params_map_.end()) {
+    const auto& iter = params_map_.find(key);
+    if (iter == params_map_.end()) {
         return nullptr;
     }
 
-    return dynamic_cast<T*>(result->second);
+    /**
+     * 实测比 return dynamic_cast<T *>(iter->second); 快很多
+     * dynamic_cast<T *> : 当前方案，耗时比约为 10:3
+     */
+    auto param = iter->second;
+    return likely(typeid(T) == typeid(*param)) ? static_cast<T *>(param) : nullptr;
 }
 
 NAO_NAMESPACE_END
