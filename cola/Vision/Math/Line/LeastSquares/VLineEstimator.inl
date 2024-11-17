@@ -50,7 +50,7 @@ void VLineParamEstimator<T>::calcError(std::vector<T> X, std::vector<T> Y)
     if (X.size() < 2 || Y.size() < 2 || X.size() != Y.size()) {
         exit(EXIT_FAILURE);
     }
-    mean_ = mean<T>(Y);
+    mean_ = VLineParamEstimator::mean<T>(Y);
     NDouble yi;   // 用拟合后的曲线计算得到的yi
     for (NInt i = 0; i < X.size(); i++) {
         yi = 0;
