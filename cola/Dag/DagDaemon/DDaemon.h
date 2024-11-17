@@ -29,6 +29,14 @@ protected:
     virtual NVoid daemonTask(DDaemonParamPtr param) = 0;
 
     /**
+     * 修改下一次休眠的时间
+     * @param param
+     * @return
+     * @notice 返回值 <=0 的时候，不生效。 > 0 的时候，仅针对下一次生效
+     */
+    virtual NMSec modify(DDaemonParamPtr param);
+
+    /**
      * 获取设置的延时信息
      * @return
      */

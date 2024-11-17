@@ -17,25 +17,25 @@ NAO_NAMESPACE_BEGIN
 struct UThreadPoolConfig : public NStruct
 {
     /** 具体值含义，参考UThreadPoolDefine.h文件 */
-    int   default_thread_size_           = NAO_DEFAULT_THREAD_SIZE;
-    int   secondary_thread_size_         = NAO_SECONDARY_THREAD_SIZE;
-    int   max_thread_size_               = NAO_MAX_THREAD_SIZE;
-    int   max_task_steal_range_          = NAO_MAX_TASK_STEAL_RANGE;
-    int   max_local_batch_size_          = NAO_MAX_LOCAL_BATCH_SIZE;
-    int   max_pool_batch_size_           = NAO_MAX_POOL_BATCH_SIZE;
-    int   max_steal_batch_size_          = NAO_MAX_STEAL_BATCH_SIZE;
-    int   primary_thread_busy_epoch_     = NAO_PRIMARY_THREAD_BUSY_EPOCH;
+    NInt   default_thread_size_           = NAO_DEFAULT_THREAD_SIZE;
+    NInt   secondary_thread_size_         = NAO_SECONDARY_THREAD_SIZE;
+    NInt   max_thread_size_               = NAO_MAX_THREAD_SIZE;
+    NInt   max_task_steal_range_          = NAO_MAX_TASK_STEAL_RANGE;
+    NInt   max_local_batch_size_          = NAO_MAX_LOCAL_BATCH_SIZE;
+    NInt   max_pool_batch_size_           = NAO_MAX_POOL_BATCH_SIZE;
+    NInt   max_steal_batch_size_          = NAO_MAX_STEAL_BATCH_SIZE;
+    NInt   primary_thread_busy_epoch_     = NAO_PRIMARY_THREAD_BUSY_EPOCH;
     NMSec primary_thread_empty_interval_ = NAO_PRIMARY_THREAD_EMPTY_INTERVAL;
     NSec  secondary_thread_ttl_          = NAO_SECONDARY_THREAD_TTL;
     NSec  monitor_span_                  = NAO_MONITOR_SPAN;
     NMSec queue_emtpy_interval_          = NAO_QUEUE_EMPTY_INTERVAL;
-    int   primary_thread_policy_         = NAO_PRIMARY_THREAD_POLICY;
-    int   secondary_thread_policy_       = NAO_SECONDARY_THREAD_POLICY;
-    int   primary_thread_priority_       = NAO_PRIMARY_THREAD_PRIORITY;
-    int   secondary_thread_priority_     = NAO_SECONDARY_THREAD_PRIORITY;
-    bool  bind_cpu_enable_               = NAO_BIND_CPU_ENABLE;
-    bool  batch_task_enable_             = NAO_BATCH_TASK_ENABLE;
-    bool  monitor_enable_                = NAO_MONITOR_ENABLE;
+    NInt   primary_thread_policy_         = NAO_PRIMARY_THREAD_POLICY;
+    NInt   secondary_thread_policy_       = NAO_SECONDARY_THREAD_POLICY;
+    NInt   primary_thread_priority_       = NAO_PRIMARY_THREAD_PRIORITY;
+    NInt   secondary_thread_priority_     = NAO_SECONDARY_THREAD_PRIORITY;
+    NBool  bind_cpu_enable_               = NAO_BIND_CPU_ENABLE;
+    NBool  batch_task_enable_             = NAO_BATCH_TASK_ENABLE;
+    NBool  monitor_enable_                = NAO_MONITOR_ENABLE;
 
     NStatus check() const
     {

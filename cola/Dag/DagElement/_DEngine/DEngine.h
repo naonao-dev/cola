@@ -5,10 +5,14 @@
  * @Date         : 2024-06-26 11:29:25
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-09-05 11:15:28
+ * @LastEditTime : 2024-11-15 13:19:43
  **/
 #ifndef NAO_DENGINE_H
 #define NAO_DENGINE_H
+
+#include <queue>
+#include <vector>
+
 
 #include "../DElementObject.h"
 #include "../DElementSorter.h"
@@ -29,13 +33,6 @@ protected:
      */
     virtual NStatus setup(const DSortedDElementPtrSet& elements) = 0;
 
-    /**
-     * 执行完毕后，确认运行是否正常
-     * @return
-     */
-    virtual NStatus afterRunCheck(){
-        NAO_EMPTY_FUNCTION
-    }
 
     /**
      * 分析所有的可以设置 linkable 的数据
@@ -53,15 +50,58 @@ protected:
         linked_size_ = 0;
         for (DElementPtr element : elements) {
             element->shape_ = internal::DElementShape::NORMAL;
-            if (1 == element->run_before_.size()
-                && 1 == (*element->run_before_.begin())->dependence_.size()
-                && element->binding_index_ == (*(element->run_before_.begin()))->binding_index_) {
+            if (1 == element->run_before_.size() && 1 == (*element->run_before_.begin())->dependence_.size() && element->binding_index_ == (*(element->run_before_.begin()))->binding_index_) {
                 element->shape_ = internal::DElementShape::LINKABLE;
                 linked_size_++;
             }
         }
     }
 
+    /**
+     * 计算当前elements的 拓扑排序信息
+     * @param elements
+     * @return
+     */
+    static DElementPtrArr getTopo(const DSortedDElementPtrSet& elements)
+    {
+        DElementPtrArr          result;
+        std::queue<DElementPtr> readyQueue;
+        for (auto* element : elements) {
+            element->left_depend_ = element->dependence_.size();
+            if (0 == element->left_depend_) {
+                readyQueue.push(element);
+            }
+        }
+
+        while (!readyQueue.empty()) {
+            auto* cur = readyQueue.front();
+            readyQueue.pop();
+            result.push_back(cur);
+
+            for (auto* element : cur->run_before_) {
+                if (0 == --element->left_depend_) {
+                    readyQueue.push(element);
+                }
+            }
+        }
+
+        for (auto element : elements) {
+            // 计算技术之后，需要恢复一下 depend的信息，以免引入误差
+            element->left_depend_ = element->dependence_.size();
+        }
+        return result;
+    }
+
+    /**
+     * 判断是否是dag的逻辑
+     * @param elements
+     * @return
+     */
+    static NBool isDag(const DSortedDElementPtrSet& elements)
+    {
+        const auto& result = getTopo(elements);
+        return result.size() == elements.size();
+    }
 
 protected:
     UThreadPoolPtr thread_pool_{nullptr};                            // 内部执行的线程池

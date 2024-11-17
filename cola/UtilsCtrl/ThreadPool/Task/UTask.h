@@ -1,10 +1,10 @@
 ﻿/**
- * @FilePath     : /cola/src/UtilsCtrl/ThreadPool/Task/UTask.h
+ * @FilePath     : /cola/cola/UtilsCtrl/ThreadPool/Task/UTask.h
  * @Description  :
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-20 19:53:15
+ * @LastEditTime : 2024-11-15 13:29:19
  **/
 #ifndef NAO_UTASK_H
 #define NAO_UTASK_H
@@ -47,7 +47,7 @@ public:
     NVoid operator()()
     {
         // impl_ 理论上不可能为空
-        impl_ ? impl_->call() : throw NException("UTask inner function is nullptr");
+        impl_->call();
     }
 
     UTask() = default;
@@ -75,7 +75,7 @@ public:
 
 private:
     std::unique_ptr<TaskBased> impl_     = nullptr;
-    int                        priority_ = 0;   // 任务的优先级信息
+    NInt                        priority_ = 0;   // 任务的优先级信息
 };
 
 

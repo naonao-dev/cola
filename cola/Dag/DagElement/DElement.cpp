@@ -5,7 +5,7 @@
  * @Date         : 2024-06-24 11:32:29
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-09-05 14:42:56
+ * @LastEditTime : 2024-11-15 14:47:05
  **/
 #include <algorithm>
 
@@ -25,7 +25,7 @@ DElement::~DElement()
 }
 
 
-NVoid DElement::beforeRun()
+NVoid DElement::refresh()
 {
     this->done_ = false;
     this->left_depend_.store(dependence_.size(), std::memory_order_release);
@@ -189,13 +189,13 @@ NStatus DElement::addDependDElements(const DElementPtrSet& elements)
 }
 
 
-NStatus DElement::addElementInfo(const DElementPtrSet& dependElements, const std::string& name, NSize loop)
+NStatus DElement::addElementInfo(const DElementPtrSet& depends, const std::string& name, NSize loop)
 {
     NAO_FUNCTION_BEGIN
     NAO_ASSERT_INIT(false)
 
     // 添加依赖的时候，可能会出现异常情况。故在这里提前添加 && 做判定
-    status = this->addDependDElements(dependElements);
+    status = this->addDependDElements(depends);
     NAO_FUNCTION_CHECK_STATUS
     this->setLoop(loop);
     this->setName(name);
@@ -512,6 +512,18 @@ DElementRelation DElement::getRelation() const
     return relation;
 }
 
+NStatus DElement::removeDepend(DElementPtr element) {
+    NAO_FUNCTION_BEGIN
+    NAO_ASSERT_NOT_NULL(element)
+    NAO_ASSERT_INIT(false)
+    NAO_RETURN_ERROR_STATUS_BY_CONDITION(!dependence_.hasValue(element),
+                                            element->getName() + " is not in [" + getName() + "]'s depends.")
+
+    dependence_.remove(element);
+    element->run_before_.remove(this);
+    left_depend_.store(dependence_.size(), std::memory_order_release);
+    NAO_FUNCTION_END
+}
 
 NBool DElement::isSerializable() const
 {
@@ -603,17 +615,5 @@ NBool DElement::isDefaultBinding() const
     return NAO_DEFAULT_BINDING_INDEX == binding_index_;
 }
 
-NBool DElement::removeDepend(DElementPtr element) {
-    NAO_ASSERT_NOT_NULL_THROW_ERROR(element)
-    NAO_ASSERT_INIT_THROW_ERROR(false)
-    if (!dependence_.hasValue(element)) {
-        return false;
-    }
-
-    dependence_.remove(element);
-    element->run_before_.remove(this);
-    left_depend_.store(dependence_.size(), std::memory_order_release);
-    return true;
-}
 
 NAO_NAMESPACE_END

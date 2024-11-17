@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/src/Dag/DagParam/DParamManger.cpp
+ * @FilePath     : /cola/cola/Dag/DagParam/DParamManager.cpp
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-06-24 11:51:40
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-24 13:47:53
+ * @LastEditTime : 2024-11-17 10:57:29
  **/
 #include "DParamManager.h"
 
@@ -96,6 +96,7 @@ std::vector<std::string> DParamManager::getKeys()
 {
     std::vector<std::string> keys;
     NAO_LOCK_GUARD           lock(this->mutex_);
+    keys.reserve(params_map_.size());
     for (const auto& iter : params_map_) {
         keys.emplace_back(iter.first);
     }

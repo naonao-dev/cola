@@ -10,8 +10,10 @@
 #ifndef NAO_DPARAM_H
 #define NAO_DPARAM_H
 
-#include "DParamObject.h"
 #include <set>
+#include <mutex>
+
+#include "DParamObject.h"
 
 NAO_NAMESPACE_BEGIN
 
@@ -25,7 +27,7 @@ public:
 #if __cplusplus >= 201703L
     std::shared_mutex _param_shared_lock_;   // 用于参数互斥的锁信息
 #else
-    std::mutex _param_shared_lock_;
+    std::recursive_mutex _param_shared_lock_;
 #endif
 
     /**

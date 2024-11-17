@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/src/Dag/DagAspect/DAspectManager.cpp
+ * @FilePath     : /cola/cola/Dag/DagAspect/DAspectManager.cpp
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-06-24 20:02:52
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-24 22:34:29
+ * @LastEditTime : 2024-11-15 13:50:51
  **/
 #include "DAspectManager.h"
 
@@ -55,7 +55,7 @@ NStatus DAspectManager::reflect(const internal::DAspectType& type, const NStatus
             aspect->enterCrashed();
             break;
         default:
-            status = NErrStatus("unknown aspect type");
+            status = NStatus("unknown aspect type");
         }
 
         NAO_FUNCTION_CHECK_STATUS

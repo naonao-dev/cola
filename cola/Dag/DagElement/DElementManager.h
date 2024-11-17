@@ -104,7 +104,6 @@ private:
     DEnginePtr            engine_{nullptr};                     // 执行引擎
     DEngineType           engine_type_{DEngineType::DYNAMIC};   // 引擎执行方式
     UThreadPoolPtr        thread_pool_{nullptr};                // 线程池
-    NBool                 auto_check_enable_ = true;            // 是否自动实现后校验逻辑
 
     friend class DPipeline;
     friend class DRegion;
