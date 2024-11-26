@@ -24,4 +24,4 @@ public:
 };
 
 NAO_NAMESPACE_END
-#endif   // CGRAPH_CSTRUCT_H
+#endif

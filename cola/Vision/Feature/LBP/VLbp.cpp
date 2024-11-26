@@ -23,41 +23,41 @@ namespace xx
  * 特征值的维度是 8邻域，即为2的8次方，256维
  * https://blog.csdn.net/cv_pyer/article/details/90646549
  */
-cv::Mat getELBPfeature(const cv::Mat& img, const int& radius = 3, const int& neighbors = 8)
+cv::Mat getELBPfeature(const cv::Mat& img, const NInt& radius = 3, const NInt& neighbors = 8)
 {
     cv::Mat gray_img;
     if (img.channels() == 3)
         cv::cvtColor(img, gray_img, cv::COLOR_RGB2GRAY);
     else
         gray_img = img;
-    NInt     width   = gray_img.cols;
-    NInt     height  = gray_img.rows;
+    NInt    width   = gray_img.cols;
+    NInt    height  = gray_img.rows;
     cv::Mat RLBPImg = cv::Mat::zeros(height - 2 * radius, width - 2 * radius, CV_8UC1);
     for (NInt n = 0; n < neighbors; n++) {
         // 计算采样点对于中心点坐标的偏移量rx，ry,计算方式结合圆形编码理解
-        NFloat  rx = static_cast<NFloat >(radius * cos(2.0 * CV_PI * n / static_cast<NFloat >(neighbors)));
-        NFloat  ry = -static_cast<NFloat >(radius * sin(2.0 * CV_PI * n / static_cast<NFloat >(neighbors)));
+        NFloat rx = static_cast<NFloat>(radius * cos(2.0 * CV_PI * n / static_cast<NFloat>(neighbors)));
+        NFloat ry = -static_cast<NFloat>(radius * sin(2.0 * CV_PI * n / static_cast<NFloat>(neighbors)));
         // 为双线性插值做准备
         // 对采样点偏移量分别进行上下取整
-        NInt x1 = static_cast<int>(floor(rx));
-        NInt x2 = static_cast<int>(ceil(rx));
-        NInt y1 = static_cast<int>(floor(ry));
-        NInt y2 = static_cast<int>(ceil(ry));
+        NInt x1 = static_cast<NInt>(floor(rx));
+        NInt x2 = static_cast<NInt>(ceil(rx));
+        NInt y1 = static_cast<NInt>(floor(ry));
+        NInt y2 = static_cast<NInt>(ceil(ry));
         // 将坐标偏移量映射到0-1之间
-        NFloat  tx = rx - x1;
-        NFloat  ty = ry - y1;
+        NFloat tx = rx - x1;
+        NFloat ty = ry - y1;
         // 根据0-1之间的x，y的权重计算公式计算权重，权重与坐标具体位置无关，与坐标间的差值有关
-        NFloat  w1 = (1 - tx) * (1 - ty);
-        NFloat  w2 = tx * (1 - ty);
-        NFloat  w3 = (1 - tx) * ty;
-        NFloat  w4 = tx * ty;
+        NFloat w1 = (1 - tx) * (1 - ty);
+        NFloat w2 = tx * (1 - ty);
+        NFloat w3 = (1 - tx) * ty;
+        NFloat w4 = tx * ty;
         // 循环处理每个像素
         for (NInt i = radius; i < height - radius; i++) {
             for (NInt j = radius; j < width - radius; j++) {
                 // 获得中心像素点的灰度值
                 uchar centerPix = gray_img.at<uchar>(i, j);
                 // 根据双线性插值公式计算第k个采样点的灰度值
-                NFloat  neighbor = gray_img.at<uchar>(i + x1, j + y1) * w1 + gray_img.at<uchar>(i + x1, j + y2) * w2 + gray_img.at<uchar>(i + x2, j + y1) * w3 + gray_img.at<uchar>(i + x2, j + y2) * w4;
+                NFloat neighbor = gray_img.at<uchar>(i + x1, j + y1) * w1 + gray_img.at<uchar>(i + x1, j + y2) * w2 + gray_img.at<uchar>(i + x2, j + y1) * w3 + gray_img.at<uchar>(i + x2, j + y2) * w4;
                 // LBP特征图像的每个邻居的LBP值累加，累加通过或操作完成，对应的LBP值通过移位取得
                 RLBPImg.at<uchar>(i - radius, j - radius) |= (neighbor > centerPix) << (neighbors - n - 1);
             }
@@ -96,23 +96,23 @@ cv::Mat getELBPfeature(const cv::Mat& img, const int& radius = 3, const int& nei
  * @return         小块图像的直方图，行向量
  * https://blog.csdn.net/zfjBIT/article/details/90644380
  */
-cv::Mat getRegionLBPH(const cv::Mat& src, const int& minValue, const int& maxValue, const bool& normed = true)
+cv::Mat getRegionLBPH(const cv::Mat& src, const NInt& minValue, const NInt& maxValue, const NBool& normed = true)
 {
     // 定义存储直方图的矩阵
     cv::Mat result;
     // 计算得到直方图bin的数目，直方图数组的大小
     NInt histSize = maxValue - minValue + 1;
     // 定义直方图每一维的bin的变化范围
-    NFloat  range[] = {static_cast<NFloat >(minValue), static_cast<NFloat >(maxValue + 1)};
+    NFloat range[] = {static_cast<NFloat>(minValue), static_cast<NFloat>(maxValue + 1)};
     // 定义直方图所有bin的变化范围
-    const NFloat * ranges = {range};
+    const NFloat* ranges = {range};
     // 计算直方图，src是要计算直方图的图像，1是要计算直方图的图像数目，0是计算直方图所用的图像的通道序号，从0索引
     // Mat()是要用的掩模，result为输出的直方图，1为输出的直方图的维度，histSize直方图在每一维的变化范围
     // ranges，所有直方图的变化范围（起点和终点）
     cv::calcHist(&src, 1, 0, cv::Mat(), result, 1, &histSize, &ranges, true, false);
     // 归一化
     if (normed) {
-        result /= static_cast<int>(src.total());
+        result /= static_cast<NInt>(src.total());
     }
     // 结果表示成只有1行的矩阵
     return result.reshape(1, 1);
@@ -129,7 +129,7 @@ cv::Mat getRegionLBPH(const cv::Mat& src, const int& minValue, const int& maxVal
  * https://blog.csdn.net/zfjBIT/article/details/90644380
  * https://blog.csdn.net/quincuntial/article/details/50541815
  */
-cv::Mat getLBPH(cv::Mat src, const int& numPatterns = 256, const int& grid_x = 8, const int& grid_y = 8, const bool& normed = true)
+cv::Mat getLBPH(cv::Mat src, const NInt& numPatterns = 256, const NInt& grid_x = 8, const NInt& grid_y = 8, const NBool& normed = true)
 {
     NInt width  = src.cols / grid_x;
     NInt height = src.rows / grid_y;

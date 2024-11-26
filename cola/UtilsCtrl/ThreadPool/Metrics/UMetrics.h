@@ -147,4 +147,4 @@ private:
 
 NAO_NAMESPACE_END
 
-#endif   // CGRAPH_UMETRICS_H
+#endif

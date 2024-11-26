@@ -9,10 +9,11 @@
  * @Copyright (c) 2024 by G, All Rights Reserved.
  **/
 #include "VPca.h"
+
 NAO_NAMESPACE_BEGIN
 NAO_VISION_NAMESPACE_BEGIN
 
-bool compareEigenvectors(const VPCA::Eigenvector& a, const VPCA::Eigenvector& b)
+NBool compareEigenvectors(const VPCA::Eigenvector& a, const VPCA::Eigenvector& b)
 {
     return a.eigenvalue > b.eigenvalue;   // 降序排序
 }
@@ -36,7 +37,7 @@ cv::Mat VPCA::reduce(const cv::Mat& data, NInt dimension, NDouble Retained)
     // 5. 计算信息保留的比例
     NFloat totalVariance    = cv::sum(eigenvalues_)[0];
     NFloat varianceRetained = 0.0f;
-    NInt  k                = 0;   // 保留的主成分数量
+    NInt   k                = 0;   // 保留的主成分数量
     for (NInt i = 0; i < eigenvalues_.rows; i++) {
         eigenvecWithVal_.push_back({eigenvalues_.at<NFloat>(i), eigenvectors_.row(i)});
         varianceRetained += eigenvalues_.at<NFloat>(i);
@@ -51,7 +52,7 @@ cv::Mat VPCA::reduce(const cv::Mat& data, NInt dimension, NDouble Retained)
     return dst;
 }
 
-void VPCA::write(std::string path)
+NVoid VPCA::write(std::string path)
 {
     cv::FileStorage f_pca(path, cv::FileStorage::WRITE);
     f_pca << "mean" << eigenmean_;
@@ -60,7 +61,7 @@ void VPCA::write(std::string path)
     f_pca.release();
 }
 
-void VPCA::read(std::string path)
+NVoid VPCA::read(std::string path)
 {
     cv::FileStorage f_pca(path, cv::FileStorage::READ);
     f_pca["mean"] >> eigenmean_;
@@ -78,5 +79,6 @@ cv::Mat VPCA::reduce_single(const cv::Mat& data)
     cv::Mat projectedVector = pca.project(data);
     return projectedVector;
 }
+
 NAO_VISION_NAMESPACE_END
 NAO_NAMESPACE_END

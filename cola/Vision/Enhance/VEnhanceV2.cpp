@@ -5,7 +5,7 @@
  * @Date         : 2024-07-27 22:36:49
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-27 22:51:10
+ * @LastEditTime : 2024-11-26 15:10:44
  * @Copyright (c) 2024 by G, All Rights Reserved.
  **/
 
@@ -169,7 +169,7 @@ NInt Curve::calcCurve(NDouble* output_y)
     return 0;
 }
 
-void Curve::draw(cv::Mat& mat)
+NVoid Curve::draw(cv::Mat& mat)
 {
     NInt      thinkness = 1;
     NInt      n         = 0;
@@ -206,14 +206,14 @@ void Curve::draw(cv::Mat& mat)
     }
 }
 
-void Curve::mouseDown(NInt x, NInt y)
+NVoid Curve::mouseDown(NInt x, NInt y)
 {
     y              = 255 - y;
     _current       = add(x, y);
     _is_mouse_down = true;
 }
 
-bool Curve::mouseMove(NInt x, NInt y)
+NBool Curve::mouseMove(NInt x, NInt y)
 {
     y = 255 - y;
     if (_is_mouse_down) {
@@ -265,13 +265,13 @@ bool Curve::mouseMove(NInt x, NInt y)
     return false;
 }
 
-void Curve::mouseUp(NInt x, NInt y)
+NVoid Curve::mouseUp(NInt x, NInt y)
 {
     y              = 255 - y;
     _is_mouse_down = false;
 }
 
-void Curve::clearPoints()
+NVoid Curve::clearPoints()
 {
     _points.clear();
 }
@@ -319,32 +319,32 @@ Curves::~Curves()
 {
 }
 
-void Curves::draw(cv::Mat& mat)
+NVoid Curves::draw(cv::Mat& mat)
 {
     if (_CurrentChannel)
         _CurrentChannel->draw(mat);
 }
 
-void Curves::mouseDown(NInt x, NInt y)
+NVoid Curves::mouseDown(NInt x, NInt y)
 {
     if (_CurrentChannel)
         _CurrentChannel->mouseDown(x, y);
 }
 
-bool Curves::mouseMove(NInt x, NInt y)
+NBool Curves::mouseMove(NInt x, NInt y)
 {
     if (_CurrentChannel)
         return _CurrentChannel->mouseMove(x, y);
     return false;
 }
 
-void Curves::mouseUp(NInt x, NInt y)
+NVoid Curves::mouseUp(NInt x, NInt y)
 {
     if (_CurrentChannel)
         _CurrentChannel->mouseUp(x, y);
 }
 
-void Curves::createColorTables(uchar colorTables[][256])
+NVoid Curves::createColorTables(uchar colorTables[][256])
 {
     NDouble z[256];
     _BlueChannel.calcCurve(z);
@@ -377,7 +377,7 @@ NInt Curves::adjust(cv::InputArray src, cv::OutputArray dst, cv::InputArray mask
     dst.create(src.size(), src.type());
     cv::Mat output = dst.getMat();
 
-    bool    hasMask = true;
+    NBool   hasMask = true;
     cv::Mat msk     = mask.getMat();
     if (msk.empty())
         hasMask = false;

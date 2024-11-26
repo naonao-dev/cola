@@ -5,7 +5,7 @@
  * @Date         : 2024-07-23 17:57:45
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-08-09 21:45:51
+ * @LastEditTime : 2024-11-26 15:13:11
  * @Copyright (c) 2024 by G, All Rights Reserved.
  **/
 #include "VFilter.h"
@@ -26,7 +26,7 @@ cv::Mat __image_make_border(cv::Mat& src)
     return padded;
 }
 
-void __fftshift(cv::Mat& plane0, cv::Mat& plane1)
+NVoid __fftshift(cv::Mat& plane0, cv::Mat& plane1)
 {
     /*----------------------以下的操作是移动图像(零频移到中心)----------------------*/
     NInt cx = plane0.cols / 2;
@@ -319,7 +319,7 @@ cv::Mat VFilter::cascade_filter(const cv::Mat& src, NInt K, NInt ksize)
     return bilateral_dst;
 }
 
-void integralImgSqDiff(cv::Mat src, cv::Mat& dst, NInt Ds, NInt t1, NInt t2, NInt m1, NInt n1)
+NVoid integralImgSqDiff(cv::Mat src, cv::Mat& dst, NInt Ds, NInt t1, NInt t2, NInt m1, NInt n1)
 {
     // 计算图像A与图像B的差值图C
     cv::Mat Dist2 = src(cv::Range(Ds, src.rows - Ds), cv::Range(Ds, src.cols - Ds)) - src(cv::Range(Ds + t1, src.rows - Ds + t1), cv::Range(Ds + t2, src.cols - Ds + t2));
@@ -333,7 +333,7 @@ void integralImgSqDiff(cv::Mat src, cv::Mat& dst, NInt Ds, NInt t1, NInt t2, NIn
     cv::integral(Dist2, dst, CV_32F);   // 计算图像D的积分图
 }
 
-void VFilter::nl_filter(cv::Mat src, cv::Mat& dst, NInt ds, NInt Ds, NFloat h)
+NVoid VFilter::nl_filter(cv::Mat src, cv::Mat& dst, NInt ds, NInt Ds, NFloat h)
 {
     cv::Mat src_tmp;
     src.convertTo(src_tmp, CV_32F);
@@ -440,6 +440,7 @@ cv::Mat VFilter::guided_filter(cv::Mat& I, cv::Mat& p, NInt r, NDouble eps)
     q.convertTo(q, CV_8U, 255);
     return q;
 }
+
 NDouble VFilter::compute_PSNR(const cv::Mat& Mat1, const cv::Mat& Mat2)
 {
     cv::Mat M1 = Mat1.clone();
@@ -518,5 +519,6 @@ NDouble VFilter::variance_laplacian(const cv::Mat& src)
     NDouble ret = (static_cast<NDouble>(*stddev.ptr<NFloat>(0, 0))) * (static_cast<NDouble>(*stddev.ptr<NFloat>(0, 0)));
     return ret;
 }
+
 NAO_VISION_NAMESPACE_END
 NAO_NAMESPACE_END

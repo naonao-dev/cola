@@ -83,9 +83,9 @@ cv::Mat VHog::extract_hog(const cv::Mat& img)
     VlHog* hog = vl_hog_new(VlHogVariant::VlHogVariantUoctti, num_bins_, VL_FALSE);
     vl_hog_set_use_bilinear_orientation_assignments(hog, VL_TRUE);
     vl_hog_put_image(hog, reinterpret_cast<NFloat*>(roi_img.data), roi_img.cols, roi_img.rows, 1, cell_size_);
-    NInt     ww = static_cast<int>(vl_hog_get_width(hog));   // assert ww == hh == numCells
-    NInt     hh = static_cast<int>(vl_hog_get_height(hog));
-    NInt     dd = static_cast<int>(vl_hog_get_dimension(hog));   // assert ww=hogDim1, hh=hogDim2, dd=hogDim3
+    NInt    ww = static_cast<int>(vl_hog_get_width(hog));   // assert ww == hh == numCells
+    NInt    hh = static_cast<int>(vl_hog_get_height(hog));
+    NInt    dd = static_cast<int>(vl_hog_get_dimension(hog));   // assert ww=hogDim1, hh=hogDim2, dd=hogDim3
     cv::Mat hogArray(1, ww * hh * dd, CV_32FC1);                // safer & same result. Don't use C-style memory management.
     vl_hog_extract(hog, hogArray.ptr<NFloat>(0));
     vl_hog_delete(hog);

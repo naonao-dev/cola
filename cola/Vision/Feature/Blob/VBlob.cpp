@@ -5,7 +5,7 @@
  * @Date         : 2024-07-31 14:02:49
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-08-09 21:48:33
+ * @LastEditTime : 2024-11-26 15:22:30
  * @Copyright (c) 2024 by G, All Rights Reserved.
  **/
 #include "VBlob.h"
@@ -128,7 +128,7 @@ NBool VBlob::DoFeatureBasic_8bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& 
 #    pragma omp parallel for
 #endif
     for (NInt idx = 1; idx <= nTotalLabel; idx++) {
-        NInt nBlobNum                            = idx - 1;
+        NInt nBlobNum                           = idx - 1;
         BlobResult_.at(nBlobNum).rectBox.x      = matStats.at<int>(idx, cv::CC_STAT_LEFT);
         BlobResult_.at(nBlobNum).rectBox.y      = matStats.at<int>(idx, cv::CC_STAT_TOP);
         BlobResult_.at(nBlobNum).rectBox.width  = matStats.at<int>(idx, cv::CC_STAT_WIDTH);
@@ -330,7 +330,7 @@ NBool VBlob::DoFeatureBasic_16bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat&
 #    pragma omp parallel for
 #endif
     for (NInt idx = 1; idx <= nTotalLabel; idx++) {
-        NInt nBlobNum                            = idx - 1;
+        NInt nBlobNum                           = idx - 1;
         BlobResult_.at(nBlobNum).rectBox.x      = matStats.at<int>(idx, cv::CC_STAT_LEFT);
         BlobResult_.at(nBlobNum).rectBox.y      = matStats.at<int>(idx, cv::CC_STAT_TOP);
         BlobResult_.at(nBlobNum).rectBox.width  = matStats.at<int>(idx, cv::CC_STAT_WIDTH);
@@ -737,8 +737,8 @@ NBool VBlob::DoFiltering(tBLOB_FEATURE& tBlobResult, NInt nBlobFilter, NInt nSig
     case E_FEATURE_GV_UP_COUNT_1:
     case E_FEATURE_GV_UP_COUNT_2:
     {
-        NInt nCount = static_cast<int>(dValue) / 10000;
-        NInt nGV    = static_cast<int>(dValue) % 10000;
+        NInt nCount = static_cast<NInt>(dValue) / 10000;
+        NInt nGV    = static_cast<NInt>(dValue) % 10000;
 
         if (nGV < 0) {
             nGV = 0;
@@ -759,8 +759,8 @@ NBool VBlob::DoFiltering(tBLOB_FEATURE& tBlobResult, NInt nBlobFilter, NInt nSig
     case E_FEATURE_GV_DOWN_COUNT_1:
     case E_FEATURE_GV_DOWN_COUNT_2:
     {
-        NInt nCount = static_cast<int>(dValue) / 10000;
-        NInt nGV    = static_cast<int>(dValue) % 10000;
+        NInt nCount = static_cast<NInt>(dValue) / 10000;
+        NInt nGV    = static_cast<NInt>(dValue) % 10000;
 
         if (nGV < 0) {
             nGV = 0;
@@ -782,7 +782,7 @@ NBool VBlob::DoFiltering(tBLOB_FEATURE& tBlobResult, NInt nBlobFilter, NInt nSig
     case E_FEATURE_GVAREA_RATIO_TEST:   // 04.20 choi
     {
 
-        NInt   nTmp    = static_cast<int>(dValue) % 10000;
+        NInt    nTmp    = static_cast<NInt>(dValue) % 10000;
         NDouble nPer    = (dValue - static_cast<double>(nTmp)) / 10000.0;
         NDouble nRatio  = nTmp / 1000;
         NDouble Mean_GV = tBlobResult.fBKGV * nRatio;

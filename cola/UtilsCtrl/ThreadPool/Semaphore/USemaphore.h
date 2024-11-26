@@ -6,8 +6,8 @@
  * @LastEditors  : naonao
  * @LastEditTime : 2024-06-20 19:53:42
  **/
-#ifndef CGRAPH_USEMAPHORE_H
-#define CGRAPH_USEMAPHORE_H
+#ifndef NAO_USEMAPHORE_H
+#define NAO_USEMAPHORE_H
 #include <condition_variable>
 #include <mutex>
 

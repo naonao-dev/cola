@@ -73,7 +73,6 @@ NStatus UThreadPool::init()
     /**
      * 等待所有thread 设置完毕之后，再进行 init()，
      * 避免在个别的平台上，可能出现 thread竞争访问其他线程、并且导致异常的情况
-     * 参考： https://github.com/ChunelFeng/CGraph/issues/309
      */
     for (int i = 0; i < config_.default_thread_size_; i++) {
         status += primary_threads_[i]->init();

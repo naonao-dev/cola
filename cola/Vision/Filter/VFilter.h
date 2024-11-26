@@ -107,7 +107,7 @@ public:
      * @return
      * 参考链接  https://mp.weixin.qq.com/s/7ul1plr_6RyNGRN766Nt8Q
      */
-    static void nl_filter(cv::Mat src, cv::Mat& dst, NInt ds, NInt Ds, NFloat h);
+    static NVoid nl_filter(cv::Mat src, cv::Mat& dst, NInt ds, NInt Ds, NFloat h);
 
     /**
      * @brief			计算信噪比，用于图像质量评价

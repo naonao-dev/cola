@@ -229,7 +229,7 @@ protected:
     /**
      * 获取执行线程对应的信息
      * @return
-     * @notice 启动线程返回-1（CGRAPH_MAIN_THREAD_ID），辅助线程返回-2（CGRAPH_SECONDARY_THREAD_COMMON_ID），主线程返回 线程index
+     * @notice 启动线程返回-1（NAO_MAIN_THREAD_ID），辅助线程返回-2（NAO_SECONDARY_THREAD_COMMON_ID），主线程返回 线程index
      */
     NIndex getThreadIndex();
 

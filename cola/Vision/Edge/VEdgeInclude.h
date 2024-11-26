@@ -15,5 +15,4 @@
 #include "Thin/VThin.h"
 #include "Threshold/VThreshold.h"
 
-
-#endif
+#endif //NAONAO_VEDGEINCLUDE_H
