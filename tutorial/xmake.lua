@@ -6,6 +6,7 @@
         "05",
         "06",
         "07",
+        "08",
 }
 
 -- add tutorial target one by one
