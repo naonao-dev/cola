@@ -26,4 +26,4 @@ using DAdapterPtr = DAdapter*;
 
 NAO_NAMESPACE_END
 
-#endif   // CGRAPH_GADAPTER_H
+#endif

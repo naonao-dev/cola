@@ -26,4 +26,4 @@ protected:
 
 NAO_NAMESPACE_END
 
-#endif   // CGRAPH_UTHREADOBJECT_H
+#endif

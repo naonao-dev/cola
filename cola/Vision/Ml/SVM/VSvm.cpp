@@ -5,7 +5,7 @@
  * @Date         : 2024-07-18 19:11:03
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-08-19 16:10:22
+ * @LastEditTime : 2024-11-26 15:23:12
  **/
 #include "VSvm.h"
 #include "../../../UtilsCtrl/FileSystem/UFs.h"
@@ -129,7 +129,7 @@ NVoid VSvm::trainLibSVM(svm_parameter& param, const NInt& used)
     prob_.y        = Malloc(NDouble, prob_.l);
     prob_.x        = Malloc(struct svm_node*, prob_.l);
     x_space_       = Malloc(struct svm_node, elements + len);
-    NInt j        = 0;
+    NInt j         = 0;
     for (NInt l = 0; l < len; l++) {
         prob_.x[l] = &x_space_[j];
         for (NInt d = 0; d < dim; d++) {

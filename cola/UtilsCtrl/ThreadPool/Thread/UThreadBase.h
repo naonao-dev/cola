@@ -6,8 +6,8 @@
  * @LastEditors  : naonao
  * @LastEditTime : 2024-06-20 19:53:51
  **/
-#ifndef CGRAPH_UTHREADBASE_H
-#define CGRAPH_UTHREADBASE_H
+#ifndef NAO_UTHREADBASE_H
+#define NAO_UTHREADBASE_H
 
 #include <thread>
 

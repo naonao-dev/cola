@@ -126,7 +126,6 @@ NStatus DElementRepository::destroy()
      * destroy的时候，恢复create的状态，确保再次轮训的时候正常
      * 理论上，cancel状态仅会出现在极短的时间段之内，
      * 当程序 cancel完成之后，就会重新恢复 CREATE的状态
-     * 问题详见: https://github.com/ChunelFeng/CGraph/issues/153
      */
     status = pushAllState(DElementState::CREATE);
     NAO_FUNCTION_END

@@ -5,7 +5,7 @@
  * @Date         : 2024-08-09 11:59:03
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-08-12 10:08:16
+ * @LastEditTime : 2024-11-26 14:04:53
  * @Copyright (c) 2024 by G, All Rights Reserved.
  **/
 #ifndef NAONAO_VCONTOURS_H
@@ -13,16 +13,22 @@
 
 #include "../../VisionObject.h"
 #include "Clipper/clipper.h"
+
 NAO_NAMESPACE_BEGIN
 NAO_VISION_NAMESPACE_BEGIN
 
 class VContours : public VisionObject
 {
 public:
-    VContours()=default;
-    ~VContours() override=default;
+    VContours()           = default;
+    ~VContours() override = default;
 
-    // 寻找轮廓
+    /**
+     * @brief: 获取轮廓
+     * @param src
+     * @return
+     * @note :
+     **/
     static std::vector<std::vector<cv::Point>> get_contours(const cv::Mat& src);
 
     /**
@@ -47,7 +53,7 @@ public:
         select_shape(in_img, out_img, contours, out_contours, func);
     **/
     template<typename callback>
-    void select_shape(const cv::Mat& in_img, cv::Mat& out_img, const std::vector<std::vector<cv::Point>>& in_contours, std::vector<std::vector<cv::Point>>& out_contours, callback callback_func)
+    NVoid select_shape(const cv::Mat& in_img, cv::Mat& out_img, const std::vector<std::vector<cv::Point>>& in_contours, std::vector<std::vector<cv::Point>>& out_contours, callback callback_func)
     {
         for (size_t i = 0; i < in_contours.size(); ++i) {
             cv::RotatedRect rot_rect = cv::minAreaRect(in_contours[i]);
@@ -84,10 +90,27 @@ public:
      **/
     static std::vector<cv::Point> contours_xor(const std::vector<cv::Point>& lcontour, const std::vector<cv::Point>& rcontour);
 
+    /**
+     * @brief:  轮廓偏移收缩
+     * @param off_value 收缩大小
+     * @return
+     * @note :
+     **/
     static std::vector<cv::Point> contours_offset(const std::vector<cv::Point>& contour, NDouble off_value);
 
+    /**
+     * @brief: 点是否在轮廓内
+     * @param point
+     * @return
+     * @note :
+     **/
     static NInt PointInPolygon(const std::vector<cv::Point>& contour, const cv::Point& point);
 
+    /**
+     * @brief: 轮廓面积
+     * @return
+     * @note :
+     **/
     static NDouble contours_area(const std::vector<cv::Point>& contour);
 
     static ClipperLib::Path                    contour2path(const std::vector<cv::Point>& contour);

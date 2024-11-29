@@ -8,5 +8,9 @@
  * @LastEditTime : 2024-08-12 15:41:20
  **/
 
+#ifndef NAO_COMMON_H
+#define NAO_COMMON_H
 
 #include "../../cola/NCola.h"
+
+#endif //NAO_COMMON_H

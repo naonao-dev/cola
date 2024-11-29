@@ -60,4 +60,4 @@ NAO_NAMESPACE_END
 
 #include "DDaemonObject.inl"
 
-#endif   // CGRAPH_GDAEMON_H
+#endif  

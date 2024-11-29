@@ -5,7 +5,7 @@
  * @Date         : 2024-07-31 10:52:14
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-08-01 12:21:44
+ * @LastEditTime : 2024-11-26 15:21:59
  * @Copyright (c) 2024 by G, All Rights Reserved.
  **/
 #ifndef NAONAO_VBLOBDEFINE_H
@@ -70,38 +70,38 @@ enum ENUM_BOLB_FEATURE
 // Blob 구조체
 struct tBLOB_FEATURE
 {
-    bool      bFiltering;       // 有/无过滤
+    NBool     bFiltering;       // 有/无过滤
     cv::Rect  rectBox;          // Bounding Box
     long      nArea;            // 客体面积
     long      nBoxArea;         // bounding box面积
-    NFloat     fBoxRatio;        // Bounding Box面积比率/对象面积 ( Rectangularity(= Extent)
+    NFloat    fBoxRatio;        // Bounding Box面积比率/对象面积 ( Rectangularity(= Extent)
     cv::Point ptCenter;         // 中心点
     long      nSumGV;           // 亮度累积
     long      nMinGV;           // 最小亮度
     long      nMaxGV;           // 最大亮度
-    NFloat     fMeanGV;          // 平均亮度
-    NFloat     fDiffGV;          // (背景-对象)亮度差异
-    NFloat     fBKGV;            // 背景亮度
-    NFloat     fStdDev;          // 标准偏差
-    NFloat     fSEMU;            // SEMU
-    NFloat     fCompactness;     // 客体有多接近圆的形状?
-    NFloat     nMinGVRatio;      // 对象最小亮度/背景亮度
-    NFloat     nMaxGVRatio;      // 对象最大亮度/背景亮度
-    NFloat     fDiffGVRatio;     // 对象的平均亮度/背景亮度
-    NFloat     fPerimeter;       // 外环线的长度
-    NFloat     fRoundness;       //
-    NFloat     fElongation;      // Box横向/纵向
-    NFloat     fMinBoxArea;      // Feret’s area
-    NFloat     fMinorAxis;       // 长轴 ( Feret’s Diameter )
-    NFloat     fMajorAxis;       // (Feret ' s diameter垂直的最长轴的长度/ Breath)
-    NFloat     fAxisRatio;       // 长轴/短轴
-    NFloat     fAngle;           // 横轴夹角(最小秒矩轴)
-    NFloat     fMinBoxRatio;     // Min Bounding Box面积比例/对象面积(Area porosity)
-    NFloat     fMeanAreaRatio;   // choikwangil
+    NFloat    fMeanGV;          // 平均亮度
+    NFloat    fDiffGV;          // (背景-对象)亮度差异
+    NFloat    fBKGV;            // 背景亮度
+    NFloat    fStdDev;          // 标准偏差
+    NFloat    fSEMU;            // SEMU
+    NFloat    fCompactness;     // 客体有多接近圆的形状?
+    NFloat    nMinGVRatio;      // 对象最小亮度/背景亮度
+    NFloat    nMaxGVRatio;      // 对象最大亮度/背景亮度
+    NFloat    fDiffGVRatio;     // 对象的平均亮度/背景亮度
+    NFloat    fPerimeter;       // 外环线的长度
+    NFloat    fRoundness;       //
+    NFloat    fElongation;      // Box横向/纵向
+    NFloat    fMinBoxArea;      // Feret’s area
+    NFloat    fMinorAxis;       // 长轴 ( Feret’s Diameter )
+    NFloat    fMajorAxis;       // (Feret ' s diameter垂直的最长轴的长度/ Breath)
+    NFloat    fAxisRatio;       // 长轴/短轴
+    NFloat    fAngle;           // 横轴夹角(最小秒矩轴)
+    NFloat    fMinBoxRatio;     // Min Bounding Box面积比例/对象面积(Area porosity)
+    NFloat    fMeanAreaRatio;   // choikwangil
 
     NFloat fAreaPer;    // choikwangil 04.20
-    long  nJudge_GV;   // choikwangil 04.20
-    long  nIn_Count;   // choikwangil 04.20
+    long   nJudge_GV;   // choikwangil 04.20
+    long   nIn_Count;   // choikwangil 04.20
 
     NLLong nHist[IMAGE_MAX_GV];   // 客体直方图
 
@@ -109,8 +109,8 @@ struct tBLOB_FEATURE
 
     std::vector<cv::Point> ptIndexs;     // Blob像素坐标
     std::vector<cv::Point> ptContours;   // Blob外围坐标
-    bool                   fromAI;       // 表明它是否来自AI算法
-    NDouble                 confidence;   // 置信度
+    NBool                  fromAI;       // 表明它是否来自AI算法
+    NDouble                confidence;   // 置信度
     NInt                   AICode;       // the AI result item classfication code
 
     // 구조체 초기화
@@ -172,10 +172,10 @@ enum ENUM_SIGN_OF_INEQUALITY
 
 struct STRU_JUDGEMENT
 {
-    bool   bUse{};          // 是否选择判定项目
-    NInt   nSign{};         // 运算符(<,>,==,<=,>=)
+    bool    bUse{};          // 是否选择判定项目
+    NInt    nSign{};         // 运算符(<,>,==,<=,>=)
     NDouble dValue{};        // 价钱
-    NInt   feature_index;   // 特征的序号，与特征枚举值相关联
+    NInt    feature_index;   // 特征的序号，与特征枚举值相关联
     // 初始化结构体
     STRU_JUDGEMENT() { memset(this, 0, sizeof(STRU_JUDGEMENT)); }
 };

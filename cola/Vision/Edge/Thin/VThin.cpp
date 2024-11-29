@@ -21,8 +21,7 @@ cv::Mat VThin::thin_line(cv::Mat& src, NInt intera /*= 2*/)
         return dst;
     }
 
-    // 非原地操作
-    if (dst.data != src.data) {
+    if (dst.data != src.data) {   // 非原地操作
         src.copyTo(dst);
     }
     NInt i;
@@ -33,21 +32,21 @@ cv::Mat VThin::thin_line(cv::Mat& src, NInt intera /*= 2*/)
     // 减一是为了方便处理8邻域，防止越界
     width        = src.cols - 1;
     height       = src.rows - 1;
-    NInt     step = (NInt)src.step;
-    NInt     p2;
-    NInt     p3;
-    NInt     p4;
-    NInt     p5;
-    NInt     p6;
-    NInt     p7;
-    NInt     p8;
-    NInt     p9;
+    NInt    step = (NInt)src.step;
+    NInt    p2;
+    NInt    p3;
+    NInt    p4;
+    NInt    p5;
+    NInt    p6;
+    NInt    p7;
+    NInt    p8;
+    NInt    p9;
     uchar*  img;
     bool    ifEnd;
-    NInt     Al;
+    NInt    Al;
     cv::Mat tmp_img;
-    // n表示迭代次数
-    for (n = 0; n < intera; n++) {
+
+    for (n = 0; n < intera; n++) {   // n表示迭代次数
         dst.copyTo(tmp_img);
         ifEnd = false;
         img   = tmp_img.data;

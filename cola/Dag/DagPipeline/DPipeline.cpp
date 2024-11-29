@@ -197,7 +197,7 @@ NStatus DPipeline::dump(std::ostream& oss)
     NAO_ASSERT_NOT_NULL(element_manager_)
     oss << std::fixed << std::setprecision(2);   // 小数点最多展示2位数字
 
-    oss << "\ndigraph CGraph {\n";
+    oss << "\ndigraph Dag {\n";
     oss << "compound=true;\n";
 
     for (const auto& element : element_manager_->manager_elements_) {

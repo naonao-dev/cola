@@ -13,7 +13,7 @@
 NAO_NAMESPACE_BEGIN
 NAO_VISION_NAMESPACE_BEGIN
 
-void error(const char* msg)
+NVoid error(const char* msg)
 {
     fprintf(stderr, "LSD Error: %s\n", msg);
     exit(EXIT_FAILURE);
@@ -49,13 +49,13 @@ NDouble dist(NDouble x1, NDouble y1, NDouble x2, NDouble y2)
     return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
 }
 
-void free_ntuple_list(ntuple_list input)
+NVoid free_ntuple_list(ntuple_list input)
 {
     if (input == nullptr || input->values == nullptr) {
         error("free_ntuple_list: invalid n-tuple input.");
     }
-    free((void*)input->values);
-    free((void*)input);
+    free((NVoid*)input->values);
+    free((NVoid*)input);
 }
 
 ntuple_list new_ntuple_list(NUInt dim)
@@ -85,7 +85,7 @@ ntuple_list new_ntuple_list(NUInt dim)
     return n_tuple;
 }
 
-void enlarge_ntuple_list(ntuple_list n_tuple)
+NVoid enlarge_ntuple_list(ntuple_list n_tuple)
 {
     /* check parameters */
     if (n_tuple == nullptr || n_tuple->values == nullptr || n_tuple->max_size == 0) {
@@ -96,13 +96,13 @@ void enlarge_ntuple_list(ntuple_list n_tuple)
     n_tuple->max_size *= 2;
 
     /* realloc memory */
-    n_tuple->values = (NDouble*)realloc((void*)n_tuple->values, n_tuple->dim * n_tuple->max_size * sizeof(NDouble));
+    n_tuple->values = (NDouble*)realloc((NVoid*)n_tuple->values, n_tuple->dim * n_tuple->max_size * sizeof(NDouble));
     if (n_tuple->values == nullptr) {
         error("not enough memory.");
     }
 }
 
-void add_7tuple(ntuple_list out, NDouble v1, NDouble v2, NDouble v3, NDouble v4, NDouble v5, NDouble v6, NDouble v7)
+NVoid add_7tuple(ntuple_list out, NDouble v1, NDouble v2, NDouble v3, NDouble v4, NDouble v5, NDouble v6, NDouble v7)
 {
     /* check parameters */
     if (out == nullptr) {
@@ -131,13 +131,13 @@ void add_7tuple(ntuple_list out, NDouble v1, NDouble v2, NDouble v3, NDouble v4,
     out->size++;
 }
 
-void free_image_char(image_char i)
+NVoid free_image_char(image_char i)
 {
     if (i == nullptr || i->data == nullptr) {
         error("free_image_char: invalid input image.");
     }
-    free((void*)i->data);
-    free((void*)i);
+    free((NVoid*)i->data);
+    free((NVoid*)i);
 }
 
 image_char new_image_char(NUInt xsize, NUInt ysize)
@@ -215,13 +215,13 @@ image_int new_image_int_ini(NUInt xsize, NUInt ysize, NInt fill_value)
     return image;
 }
 
-void free_image_double(image_double i)
+NVoid free_image_double(image_double i)
 {
     if (i == nullptr || i->data == nullptr) {
         error("free_image_double: invalid input image.");
     }
-    free((void*)i->data);
-    free((void*)i);
+    free((NVoid*)i->data);
+    free((NVoid*)i);
 }
 
 image_double new_image_double(NUInt xsize, NUInt ysize)

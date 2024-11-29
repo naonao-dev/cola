@@ -5,7 +5,7 @@
  * @Date         : 2024-07-08 15:02:17
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-08-19 14:02:42
+ * @LastEditTime : 2024-11-26 15:24:17
  **/
 #ifndef NAO_VXML_H
 #define NAO_VXML_H
@@ -21,7 +21,6 @@ NAO_VISION_NAMESPACE_BEGIN
 
 class VXmlw : public VisionObject
 {
-
 public:
     typedef std::map<std::string, NInt>           mapsi;
     typedef std::map<std::string, NInt>::iterator mapsiit;

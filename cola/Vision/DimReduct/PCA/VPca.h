@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/cola/Vision/DimReduct/PCA/VPCA.h
+ * @FilePath     : /cola/cola/Vision/DimReduct/PCA/VPca.h
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-08-02 16:22:45
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-08-07 10:03:27
+ * @LastEditTime : 2024-11-26 14:09:45
  * @Copyright (c) 2024 by G, All Rights Reserved.
  **/
 #ifndef NAONAO_VPCA_H
@@ -21,11 +21,43 @@ class VPCA : public VisionObject
 public:
     VPCA()           = default;
     ~VPCA() override = default;
+
+    /**
+     * @brief: 降维
+     * @param data
+     * @param dimension
+     * @param Retained
+     * @return
+     * @note :
+     **/
     cv::Mat reduce(const cv::Mat& data, NInt dimension = 0, NDouble Retained = 0.9);
-    void    write(std::string path);
-    void    read(std::string path);
+
+    /**
+     * @brief: 将pca 数据写入文件
+     * @param path
+     * @return
+     * @note :
+     **/
+    NVoid write(std::string path);
+
+    /**
+     * @brief: 将pca 数据从文件读取
+     * @param path
+     * @return
+     * @note :
+     **/
+    NVoid read(std::string path);
+
+    /**
+     * @brief: 降维
+     * @param data
+     * @return
+     * @note :
+     **/
     cv::Mat reduce_single(const cv::Mat& data);
+
     NAO_NO_ALLOWED_COPY(VPCA)
+
 public:
     cv::Mat eigenvalues_;
     cv::Mat eigenvectors_;
@@ -33,7 +65,7 @@ public:
     cv::Mat back_mat_;
     struct Eigenvector
     {
-        NFloat   eigenvalue;
+        NFloat  eigenvalue;
         cv::Mat eigenvector;
     };
     std::vector<Eigenvector> eigenvecWithVal_;

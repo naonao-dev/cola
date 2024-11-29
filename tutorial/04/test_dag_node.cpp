@@ -36,7 +36,7 @@ void test_simple()
     status += pipeline->registerDElement<MyNode1>(&c, {a}, "nodeC");
     status += pipeline->registerDElement<MyNode2>(&d, {b, c}, "nodeD");   // 将名为nodeD，依赖{b,c}执行的node信息，注册入pipeline中
     if (!status.isOK()) {
-        return;   // 使用时，请对所有CGraph接口的返回值做判定。今后tutorial例子中省略该操作。
+        return;   // 使用时，请对所有NAO接口的返回值做判定。今后tutorial例子中省略该操作。
     }
 
     /**

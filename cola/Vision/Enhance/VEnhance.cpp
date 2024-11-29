@@ -94,7 +94,7 @@ bool __get_variance_mean(cv::Mat& src, cv::Mat& means_dst, cv::Mat& variance_dst
         return false;
     }
     cv::Mat copyBorder_yChannels;
-    NInt     copyBorderSize = (win_size - 1) / 2;
+    NInt    copyBorderSize = (win_size - 1) / 2;
     /*扩充图像边界*/
     cv::copyMakeBorder(src, copyBorder_yChannels, copyBorderSize, copyBorderSize, copyBorderSize, copyBorderSize, cv::BORDER_REFLECT);
     for (NInt i = (win_size - 1) / 2; i < copyBorder_yChannels.rows - (win_size - 1) / 2; i++) {
@@ -143,7 +143,7 @@ cv::Mat VEnhance::adapt_contrast_enhancement(cv::Mat scr, NInt win_size /*= 15*/
     cv::Scalar dev;
     cv::meanStdDev(temp, mean, dev);
 
-    NFloat   meansGlobal = mean.val[0];
+    NFloat  meansGlobal = mean.val[0];
     cv::Mat enhanceMatrix(scr.rows, scr.cols, CV_8UC1);
     // 遍历，对每个点进行自适应调节
     for (NInt i = 0; i < scr.rows; i++) {
@@ -151,7 +151,7 @@ cv::Mat VEnhance::adapt_contrast_enhancement(cv::Mat scr, NInt win_size /*= 15*/
             if (localVarianceMatrix.at<NFloat>(i, j) >= 0.01) {
                 NFloat cg  = 0.2 * meansGlobal / localVarianceMatrix.at<NFloat>(i, j);
                 NFloat cgs = cg > maxCg ? maxCg : cg;
-                cgs       = cgs < 1 ? 1 : cgs;
+                cgs        = cgs < 1 ? 1 : cgs;
                 NInt e     = localMeansMatrix.at<NFloat>(i, j) + cgs * (temp.at<uchar>(i, j) - localMeansMatrix.at<NFloat>(i, j));
                 if (e > 255) {
                     e = 255;
@@ -255,10 +255,10 @@ NInt* __create_fast_kernel(NDouble sigma)
  */
 void __filter_gaussian(cv::Mat& img, NDouble sigma)
 {
-    NInt     i, j, k, source, filter_size;
-    NInt*    kernel;
+    NInt    i, j, k, source, filter_size;
+    NInt*   kernel;
     cv::Mat temp;
-    NInt     v1, v2, v3;
+    NInt    v1, v2, v3;
     if (sigma > 200)
         sigma = 200;
     filter_size = (NInt)floor(sigma * 6) / 2;
@@ -364,11 +364,11 @@ void __fast_filter(cv::Mat& img, NDouble sigma)
 
 cv::Mat VEnhance::retinex(cv::Mat img, NDouble sigma, NInt gain, NInt offset)
 {
-    cv::Mat   A;
-    cv::Mat   fA;
-    cv::Mat   fB;
-    cv::Mat   fC;
-    cv::Mat   dst;
+    cv::Mat    A;
+    cv::Mat    fA;
+    cv::Mat    fB;
+    cv::Mat    fC;
+    cv::Mat    dst;
     const NInt ch = img.channels();
     fA.create(cv::Size(img.cols, img.rows), CV_32FC(ch));
     fB.create(cv::Size(img.cols, img.rows), CV_32FC(ch));
@@ -397,11 +397,11 @@ cv::Mat VEnhance::multi_scale_retinex(cv::Mat img, NInt scales, NDouble* weights
     NInt       i;
     NDouble    weight;
     const NInt ch = img.channels();
-    cv::Mat   A;
-    cv::Mat   fA;
-    cv::Mat   fB;
-    cv::Mat   fC;
-    cv::Mat   dst;
+    cv::Mat    A;
+    cv::Mat    fA;
+    cv::Mat    fB;
+    cv::Mat    fC;
+    cv::Mat    dst;
     fA.create(cv::Size(img.cols, img.rows), CV_32FC(ch));
     fB.create(cv::Size(img.cols, img.rows), CV_32FC(ch));
     fC.create(cv::Size(img.cols, img.rows), CV_32FC(ch));
@@ -442,8 +442,8 @@ cv::Mat VEnhance::multi_scale_retinex(cv::Mat img, NInt scales, NDouble* weights
 
 cv::Mat VEnhance::multi_scale_retinex_CR(cv::Mat img, NInt scales, NDouble* weights, NDouble* sigmas, NInt gain, NInt offset, NDouble restoration_factor, NDouble color_gain)
 {
-    NInt     i;
-    NDouble  weight;
+    NInt    i;
+    NDouble weight;
     cv::Mat A;
     cv::Mat B;
     cv::Mat C;
@@ -610,18 +610,18 @@ void VEnhance::adapt_min_max_threshold_median(cv::Mat img, NInt& min_val, NInt& 
  */
 void __adaptive_find_threshold(cv::Mat dx, cv::Mat dy, NDouble& low, NDouble& high, NDouble percent_of_pix_is_not_edges = 0.7)
 {
-    NInt      i;
-    NInt      j;
+    NInt     i;
+    NInt     j;
     cv::Size size = dx.size();
     cv::Mat  imge = cv::Mat::zeros(size, CV_32FC1);
-    NFloat    maxv = 0.0;
-    NFloat    data = 0.0;
+    NFloat   maxv = 0.0;
+    NFloat   data = 0.0;
     for (i = 0; i < size.height; i++) {
         // 计算边缘强度
         for (j = 0; j < size.width; j++) {
-            data                 = (NFloat)(abs(dx.at<uchar>(i, j)) + abs(dy.at<uchar>(i, j)));
+            data                  = (NFloat)(abs(dx.at<uchar>(i, j)) + abs(dy.at<uchar>(i, j)));
             imge.at<NFloat>(i, j) = data;
-            maxv                 = maxv < data ? data : maxv;
+            maxv                  = maxv < data ? data : maxv;
         }
     }
     if (maxv == 0) {
@@ -635,12 +635,12 @@ void __adaptive_find_threshold(cv::Mat dx, cv::Mat dy, NDouble& low, NDouble& hi
     NFloat        range_0[2]  = {0, (NFloat)maxv};
     const NFloat* ranges[1]   = {range_0};
     const NInt    channels[1] = {0};
-    cv::Mat      hist;
+    cv::Mat       hist;
     // 注意const类型，避免参数类型不符合
     cv::calcHist(&imge, 1, channels, cv::Mat(), hist, 1, &hist_size, ranges);
-    NInt        total  = (NInt)(size.height * size.width * percent_of_pix_is_not_edges);
-    NFloat      sum    = 0;
-    NInt        icount = hist.rows;
+    NInt       total  = (NInt)(size.height * size.width * percent_of_pix_is_not_edges);
+    NFloat     sum    = 0;
+    NInt       icount = hist.rows;
     cv::Scalar mean   = cv::mean(hist);
     cv::Scalar mean1  = cv::mean(imge);
     for (i = 0; i < icount; i++) {
@@ -665,8 +665,8 @@ void __adaptive_find_threshold(cv::Mat dx, cv::Mat dy, NDouble& low, NDouble& hi
 void VEnhance::adapt_find_threshold_matlab(const cv::Mat image, NDouble& low, NDouble& high, NDouble percent_of_pix_is_not_edges /*= 0.7*/, NInt aperture_size /*= 3*/)
 {
     const NInt cn = image.channels();
-    cv::Mat   dx(image.rows, image.cols, CV_16SC(cn));
-    cv::Mat   dy(image.rows, image.cols, CV_16SC(cn));
+    cv::Mat    dx(image.rows, image.cols, CV_16SC(cn));
+    cv::Mat    dy(image.rows, image.cols, CV_16SC(cn));
     cv::Sobel(image, dx, CV_16S, 1, 0, aperture_size, 1, 0, cv::BORDER_REPLICATE);
     cv::Sobel(image, dy, CV_16S, 0, 1, aperture_size, 1, 0, cv::BORDER_REPLICATE);
     cv::Mat _dx = dx.clone();
@@ -676,7 +676,7 @@ void VEnhance::adapt_find_threshold_matlab(const cv::Mat image, NDouble& low, ND
 
 void VEnhance::non_maximum_suppression(cv::Mat& src, cv::Mat& dst, NInt win_size /*= 15*/)
 {
-    NInt     border_size = (win_size - 1) / 2;
+    NInt    border_size = (win_size - 1) / 2;
     cv::Mat src_diff, temp;
     cv::convertScaleAbs(src, src_diff);
     dst = cv::Mat::zeros(src_diff.size(), src_diff.type());
@@ -704,7 +704,7 @@ cv::Mat VEnhance::segmented_enhancement(const cv::Mat& img, NDouble r1, NDouble 
     NDouble k1 = s1 / r1;
     NDouble k2 = (s2 - s1) / (r2 - r1);
     NDouble k3 = (255 - s2) / (255 - r2);
-    uchar  Lutfirst[256];
+    uchar   Lutfirst[256];
     for (NInt i = 0; i < 256; i++) {
         if (i <= r2 && i >= r1) {
             Lutfirst[i] = k2 * (i - r1);
@@ -751,7 +751,7 @@ void __color_retransfer_with_merge(cv::Mat& output, std::vector<cv::Mat>& chls)
  */
 void __get_histogram(const cv::Mat& src, NInt* dst)
 {
-    cv::Mat      hist;
+    cv::Mat       hist;
     NInt          channels[1] = {0};
     NInt          histSize[1] = {256};
     NFloat        hranges[2]  = {0, 256.0};
@@ -759,7 +759,7 @@ void __get_histogram(const cv::Mat& src, NInt* dst)
     cv::calcHist(&src, 1, channels, cv::Mat(), hist, 1, histSize, ranges);
     for (NInt i = 0; i < 256; i++) {
         NFloat binVal = hist.at<NFloat>(i);
-        dst[i]       = NInt(binVal);
+        dst[i]        = NInt(binVal);
     }
 }
 
@@ -767,24 +767,24 @@ NDouble VEnhance::spline(NDouble* x, NDouble* y, NInt n, NDouble* t, NInt m, NDo
 {
     NDouble* dy = new NDouble[n];
     std::memset(dy, 0, sizeof(NDouble) * n);
-    dy[0]       = -0.5;
+    dy[0]        = -0.5;
     NDouble* ddy = new NDouble[n];
     std::memset(ddy, 0, sizeof(NDouble) * n);
 
     NDouble  h1;
     NDouble* s  = new NDouble[n];
     NDouble  h0 = x[1] - x[0];
-    s[0]       = 3.0 * (y[1] - y[0]) / (2.0 * h0) - ddy[0] * h0 / 4.0;
+    s[0]        = 3.0 * (y[1] - y[0]) / (2.0 * h0) - ddy[0] * h0 / 4.0;
 
     for (NInt j = 1; j <= n - 2; ++j) {
-        h1           = x[j + 1] - x[j];
+        h1            = x[j + 1] - x[j];
         NDouble alpha = h0 / (h0 + h1);
         NDouble beta  = (1.0 - alpha) * (y[j] - y[j - 1]) / h0;
-        beta         = 3.0 * (beta + alpha * (y[j + 1] - y[j]) / h1);
-        dy[j]        = -alpha / (2.0 + (1.0 - alpha) * dy[j - 1]);
-        s[j]         = (beta - (1.0 - alpha) * s[j - 1]);
-        s[j]         = s[j] / (2.0 + (1.0 - alpha) * dy[j - 1]);
-        h0           = h1;
+        beta          = 3.0 * (beta + alpha * (y[j + 1] - y[j]) / h1);
+        dy[j]         = -alpha / (2.0 + (1.0 - alpha) * dy[j - 1]);
+        s[j]          = (beta - (1.0 - alpha) * s[j - 1]);
+        s[j]          = s[j] / (2.0 + (1.0 - alpha) * dy[j - 1]);
+        h0            = h1;
     }
 
     dy[n - 1] = (3.0 * (y[n - 1] - y[n - 2]) / h1 + ddy[n - 1] * h1 / 2.0 - s[n - 2]) / (2.0 + dy[n - 2]);
@@ -803,7 +803,7 @@ NDouble VEnhance::spline(NDouble* x, NDouble* y, NInt n, NDouble* t, NInt m, NDo
 
     h1         = s[n - 2] * s[n - 2];
     ddy[n - 1] = 6.0 * (y[n - 2] - y[n - 1]) / h1 + 2.0 * (2.0 * dy[n - 1] + dy[n - 2]) / s[n - 2];
-    NDouble g   = 0.0;
+    NDouble g  = 0.0;
     for (NInt i = 0; i <= n - 2; i++) {
         h1 = 0.5 * s[i] * (y[i] + y[i + 1]);
         h1 = h1 - s[i] * s[i] * s[i] * (ddy[i] + ddy[i + 1]) / 24.0;
@@ -931,10 +931,10 @@ cv::Mat VEnhance::gray_stairs(const cv::Mat& img, NDouble sin /*= 0.0*/, NDouble
     NDouble Hout   = std::min(hout, 255.0);                     // Hout, 输出白场阈值, Sout<Hout<=255
     NDouble difin  = Hin - Sin;
     NDouble difout = Hout - Sout;
-    uchar  lutData[256];
+    uchar   lutData[256];
     for (NInt i = 0; i < 256; i++) {
-        NDouble v1  = std::min(std::max(255 * (i - Sin) / difin, 0.0), 255.0);         // 输入动态线性拉伸
-        NDouble v2  = 255 * std::pow(v1 / 255.0, 1.0 / Mt);                            // 灰场伽马调节
+        NDouble v1 = std::min(std::max(255 * (i - Sin) / difin, 0.0), 255.0);          // 输入动态线性拉伸
+        NDouble v2 = 255 * std::pow(v1 / 255.0, 1.0 / Mt);                             // 灰场伽马调节
         lutData[i] = (NInt)std::min(std::max(Sout + difout * v2 / 255, 0.0), 255.0);   // # 输出线性拉伸
     }
     cv::Mat lut(1, 256, CV_8UC1, lutData);
@@ -969,8 +969,8 @@ cv::Mat VEnhance::get_rect_img(const cv::Mat& img, std::vector<cv::Point2i>& vec
 
 cv::Mat VEnhance::get_equal_img(const cv::Mat& hist_img, const cv::Rect& hist_rect, const cv::Mat& template_img, const cv::Rect& template_rect)
 {
-    cv::Mat      hist1;
-    cv::Mat      hist2;
+    cv::Mat       hist1;
+    cv::Mat       hist2;
     const NInt    channels[1] = {0};
     NFloat        inRanges[2] = {0, 255};
     const NFloat* ranges[1]   = {inRanges};
@@ -1027,15 +1027,15 @@ cv::Mat GetRotateCropImage(const cv::Mat& srcimage, std::vector<std::vector<NInt
     NInt                           right        = NInt(*std::max_element(x_collect, x_collect + 4));
     NInt                           top          = NInt(*std::min_element(y_collect, y_collect + 4));
     NInt                           bottom       = NInt(*std::max_element(y_collect, y_collect + 4));
-    cv::Mat                       img_crop;
+    cv::Mat                        img_crop;
     image(cv::Rect(left, top, right - left, bottom - top)).copyTo(img_crop);
 
     for (NInt i = 0; i < points.size(); i++) {
         points[i][0] -= left;
         points[i][1] -= top;
     }
-    NInt         img_crop_width  = NInt(sqrt(pow(points[0][0] - points[1][0], 2) + pow(points[0][1] - points[1][1], 2)));
-    NInt         img_crop_height = NInt(sqrt(pow(points[0][0] - points[3][0], 2) + pow(points[0][1] - points[3][1], 2)));
+    NInt        img_crop_width  = NInt(sqrt(pow(points[0][0] - points[1][0], 2) + pow(points[0][1] - points[1][1], 2)));
+    NInt        img_crop_height = NInt(sqrt(pow(points[0][0] - points[3][0], 2) + pow(points[0][1] - points[3][1], 2)));
     cv::Point2f pts_std[4], pointsf[4];
     pts_std[0] = cv::Point2f(0., 0.);
     pts_std[1] = cv::Point2f(img_crop_width, 0.);
@@ -1056,10 +1056,10 @@ cv::Mat VEnhance::get_equal_img_2(const cv::Mat& hist_img, const std::vector<cv:
     std::vector<std::vector<NInt>> hist_box{
         {NInt(hist_pts[0].x), NInt(hist_pts[0].y)}, {NInt(hist_pts[1].x), NInt(hist_pts[1].y)}, {NInt(hist_pts[2].x), NInt(hist_pts[2].y)}, {NInt(hist_pts[3].x), NInt(hist_pts[3].y)}};
     std::vector<std::vector<NInt>> temp_box{{NInt(template_pts[0].x), NInt(template_pts[0].y)},
-                                           {NInt(template_pts[1].x), NInt(template_pts[1].y)},
-                                           {NInt(template_pts[2].x), NInt(template_pts[2].y)},
-                                           {NInt(template_pts[3].x), NInt(template_pts[3].y)}};
-    cv::Mat                       hist1, hist2;
+                                            {NInt(template_pts[1].x), NInt(template_pts[1].y)},
+                                            {NInt(template_pts[2].x), NInt(template_pts[2].y)},
+                                            {NInt(template_pts[3].x), NInt(template_pts[3].y)}};
+    cv::Mat                        hist1, hist2;
     const NInt                     channels[1] = {0};
     NFloat                         inRanges[2] = {0, 255};
     const NFloat*                  ranges[1]   = {inRanges};
