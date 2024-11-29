@@ -15,7 +15,7 @@ using namespace nao;
 void test_timer()
 {
     UTimer timer;
-    timer.start(1000, [] { NAO_ECHO("Hello, naonao"); });
+    timer.start(1000, [] { NAO_ECHO("Hello, naonao"); },[]{return 0;});
 
     NAO_SLEEP_MILLISECOND(5500)
     timer.stop();

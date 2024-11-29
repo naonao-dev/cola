@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/src/Dag/DagMessage/DMessageManager.h
+ * @FilePath     : /cola/cola/Dag/DagMessage/DMessageManager.h
  * @Description  : 消息管理类
  * @Author       : naonao
  * @Date         : 2024-06-24 16:59:36
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-24 16:59:37
+ * @LastEditTime : 2024-11-15 13:51:23
  **/
 #ifndef NAO_DMESSAGEMANAGER_H
 #define NAO_DMESSAGEMANAGER_H
@@ -37,14 +37,13 @@ public:
     {
         NAO_FUNCTION_BEGIN
 
-        auto innerTopic = internal::SEND_RECV_PREFIX + topic;   // 中间做一层映射，用来区分是 PubSub的，还是SendRecv的
-        auto result     = send_recv_message_map_.find(innerTopic);
+        auto           innerTopic = internal::SEND_RECV_PREFIX + topic;   // 中间做一层映射，用来区分是 PubSub的，还是SendRecv的
+        NAO_LOCK_GUARD lk(send_recv_mutex_);
+        auto           result = send_recv_message_map_.find(innerTopic);
         if (result != send_recv_message_map_.end()) {
             // 如果类型和size完全匹配的话，则直接返回创建成功。否则返回错误
             auto curTopic = result->second;
-            status        = (typeid(*curTopic).name() == typeid(DMessage<TImpl>).name() && curTopic->getCapacity() == size)
-                                ? NStatus()
-                                : NErrStatus("create topic [" + topic + "] duplicate");
+            status        = (typeid(*curTopic).name() == typeid(DMessage<TImpl>).name() && curTopic->getCapacity() == size) ? NStatus() : NStatus("create topic [" + topic + "] duplicate");
         }
         else {
             // 创建一个 topic信息
@@ -63,8 +62,9 @@ public:
     NStatus removeTopic(const std::string& topic)
     {
         NAO_FUNCTION_BEGIN
-        auto innerTopic = internal::SEND_RECV_PREFIX + topic;
-        auto result     = send_recv_message_map_.find(innerTopic);
+        auto           innerTopic = internal::SEND_RECV_PREFIX + topic;
+        NAO_LOCK_GUARD lk(send_recv_mutex_);
+        auto           result = send_recv_message_map_.find(innerTopic);
         if (result == send_recv_message_map_.end()) {
             NAO_RETURN_ERROR_STATUS("no find [" + topic + "] topic");
         }
@@ -188,7 +188,9 @@ public:
     NIndex bindTopic(const std::string& topic, NUInt size)
     {
         auto innerTopic = internal::PUB_SUB_PREFIX + topic;
-        auto message = UAllocator::safeMallocTemplateNObject<DMessage<TImpl>>(size);
+
+        NAO_LOCK_GUARD lk(send_recv_mutex_);
+        auto           message = UAllocator::safeMallocTemplateNObject<DMessage<TImpl>>(size);
         NAO_LOCK_GUARD lock(bind_mutex_);
         NIndex         connId = (++cur_conn_id_);
         auto           result = pub_sub_message_map_.find(innerTopic);
@@ -282,8 +284,9 @@ public:
     NStatus dropTopic(const std::string& topic)
     {
         NAO_FUNCTION_BEGIN
-        auto innerTopic = internal::PUB_SUB_PREFIX + topic;
-        auto result     = pub_sub_message_map_.find(innerTopic);
+        auto           innerTopic = internal::PUB_SUB_PREFIX + topic;
+        NAO_LOCK_GUARD lk(send_recv_mutex_);
+        auto           result = pub_sub_message_map_.find(innerTopic);
         if (result == pub_sub_message_map_.end()) {
             NAO_RETURN_ERROR_STATUS("no find [" + topic + "] topic");
         }
@@ -303,18 +306,24 @@ public:
     NStatus clear() final
     {
         NAO_FUNCTION_BEGIN
-        for (auto& cur : send_recv_message_map_) {
-            NAO_DELETE_PTR(cur.second)
+        {
+            NAO_LOCK_GUARD lk(send_recv_mutex_);
+            for (auto& cur : send_recv_message_map_) {
+                NAO_DELETE_PTR(cur.second)
+            }
+            send_recv_message_map_.clear();
         }
 
-        for (auto& cur : pub_sub_message_map_) {
-            for (auto iter : cur.second) {
-                NAO_DELETE_PTR(iter);
+        {
+            NAO_LOCK_GUARD lk(pub_sub_mutex_);
+            for (auto& cur : pub_sub_message_map_) {
+                for (auto iter : cur.second) {
+                    NAO_DELETE_PTR(iter);
+                }
             }
+            pub_sub_message_map_.clear();
+            cur_conn_id_ = 0;
         }
-        send_recv_message_map_.clear();
-        pub_sub_message_map_.clear();
-        cur_conn_id_ = 0;
         NAO_FUNCTION_END
     }
 
@@ -343,6 +352,9 @@ private:
     NIndex                                                    cur_conn_id_ = 0;         // 记录当前的conn信息
 
     std::mutex bind_mutex_;
+
+    std::mutex pub_sub_mutex_;
+    std::mutex send_recv_mutex_;
 
     template<typename U, USingletonType, NBool>
     friend class USingleton;

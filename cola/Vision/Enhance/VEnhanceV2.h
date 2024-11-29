@@ -24,8 +24,8 @@ class Curve
 protected:
     cv::Scalar                       _color;
     cv::Scalar                       _back_color;
-    NInt                              _tolerance;   // 鼠标按下或移动时，捕获曲线点的误差范围
-    bool                             _is_mouse_down;
+    NInt                             _tolerance;   // 鼠标按下或移动时，捕获曲线点的误差范围
+    NBool                            _is_mouse_down;
     std::vector<cv::Point>           _points;    // control points 曲线的所有控制点
     std::vector<cv::Point>::iterator _current;   // pointer to current point 当前控制点的指针
 
@@ -36,16 +36,16 @@ protected:
 public:
     Curve();
     virtual ~Curve();
-    NInt  calcCurve(NDouble* z);      // 供内部调用的方法：计算曲线
-    void draw(cv::Mat& mat);        // 将曲线画在mat上
-    void mouseDown(NInt x, NInt y);   // 当鼠标按下，请调用mouseDown()方法
-    bool mouseMove(NInt x, NInt y);   // 当鼠标移动，请调用mouseMove()方法
-    void mouseUp(NInt x, NInt y);     // 当鼠标抬起，请调用mouseUp()方法
+    NInt  calcCurve(NDouble* z);       // 供内部调用的方法：计算曲线
+    NVoid draw(cv::Mat& mat);          // 将曲线画在mat上
+    NVoid mouseDown(NInt x, NInt y);   // 当鼠标按下，请调用mouseDown()方法
+    NBool mouseMove(NInt x, NInt y);   // 当鼠标移动，请调用mouseMove()方法
+    NVoid mouseUp(NInt x, NInt y);     // 当鼠标抬起，请调用mouseUp()方法
 
     // 以下方法用于：用编程方式生成曲线
-    void clearPoints();                                 // 清除曲线上所有的点
-    NInt  addPoint(const cv::Point& p);                  // 增加一个点
-    NInt  deletePoint(const cv::Point& p);               // 删除一个点
+    NVoid clearPoints();                                   // 清除曲线上所有的点
+    NInt  addPoint(const cv::Point& p);                    // 增加一个点
+    NInt  deletePoint(const cv::Point& p);                 // 删除一个点
     NInt  movePoint(const cv::Point& p, NInt x, NInt y);   // 移动一个点
 };
 
@@ -55,20 +55,20 @@ public:
 class Curves
 {
 protected:
-    void createColorTables(uchar colorTables[][256]);
+    NVoid createColorTables(uchar colorTables[][256]);
 
 public:
     Curves();
     virtual ~Curves();
-    Curve  _RGBChannel;               // RGB总通道
-    Curve  _RedChannel;               // Red通道
-    Curve  _GreenChannel;             // Green通道
-    Curve  _BlueChannel;              // Blue通道
-    Curve* _CurrentChannel;           // 当前通道的指针
-    void   draw(cv::Mat& mat);        // 将曲线画在mat上
-    void   mouseDown(NInt x, NInt y);   // 当鼠标按下，请调用mouseDown()方法
-    bool   mouseMove(NInt x, NInt y);   // 当鼠标移动，请调用mouseMove()方法
-    void   mouseUp(NInt x, NInt y);     // 当鼠标抬起，请调用mouseUp()方法
+    Curve  _RGBChannel;                 // RGB总通道
+    Curve  _RedChannel;                 // Red通道
+    Curve  _GreenChannel;               // Green通道
+    Curve  _BlueChannel;                // Blue通道
+    Curve* _CurrentChannel;             // 当前通道的指针
+    NVoid  draw(cv::Mat& mat);          // 将曲线画在mat上
+    NVoid  mouseDown(NInt x, NInt y);   // 当鼠标按下，请调用mouseDown()方法
+    NBool  mouseMove(NInt x, NInt y);   // 当鼠标移动，请调用mouseMove()方法
+    NVoid  mouseUp(NInt x, NInt y);     // 当鼠标抬起，请调用mouseUp()方法
     // 实施曲线调整
     NInt adjust(cv::InputArray src, cv::OutputArray dst, cv::InputArray mask = cv::noArray());
 };
@@ -98,4 +98,4 @@ public:
 NAO_VISION_NAMESPACE_END
 NAO_NAMESPACE_END
 
-#endif
+#endif   // NAONAO_VENHANCEV2_H

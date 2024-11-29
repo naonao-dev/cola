@@ -82,7 +82,7 @@ void test_threadpool_2(UThreadPoolPtr tp)
 
     /** 添加一个不耗时的任务 */
     int  i = 1, j = 2, k = 3;
-    auto hcg = [] { NAO_ECHO("Hello, CGraph."); };
+    auto hcg = [] { NAO_ECHO("Hello, NAO."); };
     taskGroup.addTask(hcg);
 
     /** 添加一个耗时为1000ms的任务 */
@@ -101,7 +101,7 @@ void test_threadpool_2(UThreadPoolPtr tp)
 
     /** 如果添加耗时3000ms的任务，则整体执行失败 */
     /* taskGroup.addTask([] {
-          CGRAPH_SLEEP_MILLISECOND(3000)
+          NAO_SLEEP_MILLISECOND(3000)
      }); */
 
     /**
@@ -110,9 +110,9 @@ void test_threadpool_2(UThreadPoolPtr tp)
      * */
     /* taskGroup.setOnFinished([] (const CStatus& sts) {
         if(sts.isOK()) {
-            CGRAPH_ECHO("task group run success.");
+            NAO_ECHO("task group run success.");
         } else {
-            CGRAPH_ECHO("task group run failed, error info is [%s].", sts.getInfo().c_str());
+            NAO_ECHO("task group run failed, error info is [%s].", sts.getInfo().c_str());
         }
     }); */
 

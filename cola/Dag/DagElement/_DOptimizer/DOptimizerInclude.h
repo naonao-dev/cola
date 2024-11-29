@@ -15,4 +15,4 @@
 #include "DSeparateOptimizer.h"
 #include "DTrimOptimizer.h"
 
-#endif   // CGRAPH_GOPTIMIZERINCLUDE_H
+#endif   

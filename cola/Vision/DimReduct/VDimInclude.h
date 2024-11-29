@@ -13,4 +13,4 @@
 
 #include "PCA/VPca.h"
 
-#endif
+#endif //NAONAO_VDIMINCLUDE_H

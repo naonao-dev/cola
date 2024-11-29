@@ -1,10 +1,10 @@
 ﻿/**
- * @FilePath     : /cola/src/UtilsCtrl/ThreadPool/Thread/UThreadSecondary.h
+ * @FilePath     : /cola/cola/UtilsCtrl/ThreadPool/Thread/UThreadSecondary.h
  * @Description  :
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-20 19:54:17
+ * @LastEditTime : 2024-11-15 14:18:10
  **/
 #ifndef NAO_UTHREADSECONDARY_H
 #define NAO_UTHREADSECONDARY_H
@@ -64,8 +64,7 @@ protected:
     {
         NAO_FUNCTION_BEGIN
         NAO_ASSERT_INIT(true)
-
-        status = loopProcess();
+        loopProcess();
         NAO_FUNCTION_END
     }
 
@@ -105,7 +104,7 @@ protected:
     {
         auto task = this->pool_task_queue_->popWithTimeout(ms);
         if (nullptr != task) {
-            (*task)();
+           runTask(*task);
         }
     }
 

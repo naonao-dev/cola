@@ -33,15 +33,15 @@ public:
     NBool DoFeatureBasic_16bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& matCentroid, cv::Mat& GrayBuffer, NInt nTotalLabel);
 
     std::vector<tBLOB_FEATURE> DoDefectBlobSingleJudgment(const std::vector<STRU_DEFECT_ITEM>& EngineerBlockDefectJudge);
-    NBool                       DoFiltering(tBLOB_FEATURE& tBlobResult, NInt nBlobFilter, NInt nSign, NDouble dValue);
-    NBool                       Compare(NDouble dFeatureValue, NInt nSign, NDouble dValue);
+    NBool                      DoFiltering(tBLOB_FEATURE& tBlobResult, NInt nBlobFilter, NInt nSign, NDouble dValue);
+    NBool                      Compare(NDouble dFeatureValue, NInt nSign, NDouble dValue);
 
 protected:
-    NBool                       bComplete_;    // 确认Blob是否已完成。
+    NBool                      bComplete_;    // 确认Blob是否已完成。
     std::vector<tBLOB_FEATURE> BlobResult_;   // Blob结果列表
 };   // class VBlob
 
 NAO_VISION_NAMESPACE_END
 NAO_NAMESPACE_END
 
-#endif
+#endif   // NAONAO_VBLOB_H

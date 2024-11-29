@@ -1,21 +1,24 @@
-﻿/**
- * @FilePath     : /cola/src/Dag/DagElement/DElement.inl
+﻿/*
+ * @FilePath     : /cola/cola/Dag/DagElement/DElement.inl
  * @Description  :
  * @Author       : naonao
- * @Date         : 2024-06-24 11:32:12
+ * @Date         : 2024-08-12 17:25:02
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-24 11:32:12
+ * @LastEditTime : 2024-11-17 11:03:24
+ * Copyright (c) 2024 by G, All Rights Reserved.
  */
+
 #ifndef NAO_DELEMENT_INL
 #define NAO_DELEMENT_INL
+
+#include <typeinfo>
 
 #include "DElement.h"
 
 NAO_NAMESPACE_BEGIN
 
-template<typename TAspect, typename TParam, c_enable_if_t<std::is_base_of<DAspect, TAspect>::value, int>,
-         c_enable_if_t<std::is_base_of<DAspectParam, TParam>::value, int>>
+template<typename TAspect, typename TParam, c_enable_if_t<std::is_base_of<DAspect, TAspect>::value, int>, c_enable_if_t<std::is_base_of<DAspectParam, TParam>::value, int>>
 DElementPtr DElement::addDAspect(TParam* param)
 {
     if (!aspect_manager_) {
@@ -56,7 +59,7 @@ DElementPtr DElement::addEParam(const std::string& key, T* param)
     T* cur = NAO_SAFE_MALLOC_NOBJECT(T);
     cur->clone(param);
 
-    local_params_[key] = cur;   // 写入其中
+    local_params_[key] = cur;
     return this;
 }
 
@@ -65,15 +68,12 @@ template<typename T, c_enable_if_t<std::is_base_of<DElementParam, T>::value, int
 T* DElement::getEParam(const std::string& key)
 {
     auto iter = local_params_.find(key);
-    return dynamic_cast<T*>((iter != local_params_.end()) ? iter->second : nullptr);
-}
+    if (iter == local_params_.end()) {
+        return nullptr;
+    }
 
-template<typename T,
-        c_enable_if_t<std::is_base_of<DElement, T>::value, int>>
-T* DElement::getPtr(NBool allowEmpty) {
-    T* ptr = dynamic_cast<T *>(this);
-    NAO_THROW_EXCEPTION_BY_CONDITION(!allowEmpty && !ptr, "change ptr type failed")
-    return ptr;
+    auto param = iter->second;
+    return likely(typeid(T) == typeid(*param)) ? static_cast<T*>(param) : nullptr;
 }
 
 NAO_NAMESPACE_END

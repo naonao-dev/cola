@@ -5,7 +5,7 @@
  * @Date         : 2024-06-28 10:35:54
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-08-12 15:09:35
+ * @LastEditTime : 2024-11-15 11:34:36
  **/
 #include "DPipeline.h"
 #include "../DagElement/_DOptimizer/DOptimizerInclude.h"
@@ -117,7 +117,7 @@ NStatus DPipeline::process(NSize runTimes)
 }
 
 
-NStatus DPipeline::registerDNode(DElementPPtr nodeRef, const DElementPtrSet& dependElements, const std::string& name, NSize loop)
+NStatus DPipeline::registerDNode(DElementPPtr nodeRef, const DElementPtrSet& depends, const std::string& name, NSize loop)
 {
     NAO_FUNCTION_BEGIN
     NAO_ASSERT_INIT(false)
@@ -128,12 +128,12 @@ NStatus DPipeline::registerDNode(DElementPPtr nodeRef, const DElementPtrSet& dep
     NAO_RETURN_ERROR_STATUS_BY_CONDITION(nullptr != node->belong_, "[" + node->getName() + "] can not register to pipeline for its belong to [" + node->belong_->getName() + "]")
     NAO_RETURN_ERROR_STATUS_BY_CONDITION(node->isRegistered(), "[" + node->getName() + "] register duplicate")
 
-    status = innerRegister(node, dependElements, name, loop);
+    status = innerRegister(node, depends, name, loop);
     NAO_FUNCTION_END
 }
 
 
-NStatus DPipeline::registerDGroup(DElementPPtr groupRef, const DElementPtrSet& dependElements, const std::string& name, NSize loop)
+NStatus DPipeline::registerDGroup(DElementPPtr groupRef, const DElementPtrSet& depends, const std::string& name, NSize loop)
 {
     NAO_FUNCTION_BEGIN
     NAO_ASSERT_INIT(false)
@@ -144,7 +144,7 @@ NStatus DPipeline::registerDGroup(DElementPPtr groupRef, const DElementPtrSet& d
     NAO_RETURN_ERROR_STATUS_BY_CONDITION(nullptr != group->belong_, "[" + group->getName() + "] can not register to pipeline for its belong to [" + group->belong_->getName() + "]")
     NAO_RETURN_ERROR_STATUS_BY_CONDITION(group->isRegistered(), "[" + group->getName() + "] register duplicate")
 
-    status = innerRegister(group, dependElements, name, loop);
+    status = innerRegister(group, depends, name, loop);
     NAO_FUNCTION_END
 }
 
@@ -197,7 +197,7 @@ NStatus DPipeline::dump(std::ostream& oss)
     NAO_ASSERT_NOT_NULL(element_manager_)
     oss << std::fixed << std::setprecision(2);   // 小数点最多展示2位数字
 
-    oss << "\ndigraph CGraph {\n";
+    oss << "\ndigraph Dag {\n";
     oss << "compound=true;\n";
 
     for (const auto& element : element_manager_->manager_elements_) {
@@ -253,18 +253,6 @@ DPipelinePtr DPipeline::setSharedThreadPool(UThreadPoolPtr ptr)
     NAO_THROW_EXCEPTION_BY_STATUS(schedule_.makeType(ptr))
     return this;
 }
-
-
-DPipelinePtr DPipeline::setAutoCheck(NBool enable)
-{
-    NAO_FUNCTION_BEGIN
-    NAO_ASSERT_INIT_THROW_ERROR(false)
-    NAO_ASSERT_NOT_NULL_THROW_ERROR(element_manager_)
-
-    element_manager_->auto_check_enable_ = enable;
-    return this;
-}
-
 
 NSize DPipeline::getMaxPara()
 {
@@ -354,14 +342,14 @@ NStatus DPipeline::initEnv()
 }
 
 
-NStatus DPipeline::innerRegister(DElementPtr element, const DElementPtrSet& dependElements, const std::string& name, NSize loop)
+NStatus DPipeline::innerRegister(DElementPtr element, const DElementPtrSet& depends, const std::string& name, NSize loop)
 {
     NAO_FUNCTION_BEGIN
     NAO_ASSERT_NOT_NULL(element)
     NAO_ASSERT_INIT(false)
 
     const std::string& curName = name.empty() ? element->getName() : name;
-    status                     = element->addElementInfo(dependElements, curName, loop);
+    status                     = element->addElementInfo(depends, curName, loop);
     NAO_FUNCTION_CHECK_STATUS
 
     status = element->addManagers(param_manager_, event_manager_);

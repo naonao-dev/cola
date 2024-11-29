@@ -59,14 +59,7 @@ NStatus DElementManager::destroy()
 NStatus DElementManager::run()
 {
     NAO_FUNCTION_BEGIN
-
     status = engine_->run();   // 通过引擎来执行全部的逻辑
-    NAO_FUNCTION_CHECK_STATUS
-
-    if (auto_check_enable_) {
-        // 默认是需要check一下执行结果的。如果为了增加一点效率，也可以通过外部设置不检查
-        status = engine_->afterRunCheck();
-    }
     NAO_FUNCTION_END
 }
 
@@ -124,10 +117,14 @@ NStatus DElementManager::initEngine()
     NAO_DELETE_PTR(engine_)
 
     switch (engine_type_) {
-    case DEngineType::DYNAMIC: engine_ = NAO_SAFE_MALLOC_NOBJECT(DDynamicEngine) break;
-    case DEngineType::TOPO: engine_ = NAO_SAFE_MALLOC_NOBJECT(DTopoEngine) break;
-    case DEngineType::STATIC: engine_ = NAO_SAFE_MALLOC_NOBJECT(DStaticEngine) break;
-    default: NAO_RETURN_ERROR_STATUS("unknown engine type")
+    case DEngineType::DYNAMIC:
+        engine_ = NAO_SAFE_MALLOC_NOBJECT(DDynamicEngine) break;
+    case DEngineType::TOPO:
+        engine_ = NAO_SAFE_MALLOC_NOBJECT(DTopoEngine) break;
+    case DEngineType::STATIC:
+        engine_ = NAO_SAFE_MALLOC_NOBJECT(DStaticEngine) break;
+    default:
+        NAO_RETURN_ERROR_STATUS("unknown engine type")
     }
 
     engine_->thread_pool_ = thread_pool_;
@@ -181,7 +178,8 @@ NBool DElementManager::checkSerializable()
     return (1 == frontSize) && (1 == tailSize);
 }
 
-NSize DElementManager::trim() {
+NSize DElementManager::trim()
+{
     return DTrimOptimizer::trim(manager_elements_);
 }
 

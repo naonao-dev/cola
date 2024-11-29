@@ -1,10 +1,10 @@
 ﻿/**
- * @FilePath     : /cola/src/UtilsCtrl/Timer/UTimer.h
+ * @FilePath     : /cola/cola/UtilsCtrl/Timer/UTimer.h
  * @Description  :
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-21 15:39:35
+ * @LastEditTime : 2024-11-17 10:42:56
  * @Copyright    :
  **/
 #ifndef NAO_UTIMER_H
@@ -22,11 +22,15 @@ public:
 
     /**
      * 开始执行定时器
-     * @param interval 间隔时间，单位ms
+     * @tparam TTask
+     * @tparam TMod
+     * @param interval
      * @param task
+     * @param modify
+     * @return
      */
-    template<typename FunctionType>
-    NVoid start(NMSec interval, const FunctionType& task)
+    template<typename TTask, typename TMod>
+    NVoid start(NMSec interval, const TTask& task, const TMod& modify)
     {
         if (!is_stop_.exchange(false)) {
             return;   // 如果正在执行中，则无法继续执行
@@ -39,21 +43,32 @@ public:
          * std::launch::async：在调用async就开始创建线程。
          * std::launch::deferred：延迟加载方式创建线程。调用async时不创建线程，直到调用了future的get或者wait时才创建线程。
          */
-        future_ = std::async(std::launch::async, [this, task]() {
-            while (!is_stop_) {
-                NAO_UNIQUE_LOCK lk(mutex_);
-                auto            result = cv_.wait_for(lk, std::chrono::milliseconds(left_interval_));
-                if (std::cv_status::timeout == result && !is_stop_) {
-                    NMSec start = NAO_GET_CURRENT_MS();
-                    task();
-                    NMSec span = NAO_GET_CURRENT_MS() - start;
-                    /**
-                     * 如果任务执行时间 < 设定的时间，则消除任务耗时影响
-                     * 如果任务执行时间 > 设定的时间，则继续sleep设定时长
-                     */
-                    left_interval_ = (origin_interval_ > span) ? (origin_interval_ - span) : (origin_interval_);
-                }
-            }
+        future_ = std::async(std::launch::async, [this, task, modify]() {
+             while (!is_stop_) {
+                 NAO_UNIQUE_LOCK lk(mutex_);
+                 auto result = cv_.wait_for(lk, std::chrono::milliseconds(left_interval_));
+                 if (std::cv_status::timeout == result && !is_stop_) {
+                     NMSec start = NAO_GET_CURRENT_MS();
+                     task();
+                     NMSec ms = modify();
+                     if (ms > 0) {
+                         /**
+                          * 如果有时间修改函数，并且修改了时间
+                          * 则修改下一次的休眠时间
+                          */
+                         left_interval_ = ms;
+                     } else {
+                         NMSec span = NAO_GET_CURRENT_MS() - start;
+                         /**
+                          * 如果任务执行时间 < 设定的时间，则消除任务耗时影响
+                          * 如果任务执行时间 > 设定的时间，则继续sleep设定时长
+                          */
+                         left_interval_ = (origin_interval_ > span)
+                                          ? (origin_interval_ - span)
+                                          : (origin_interval_);
+                     }
+                 }
+             }
         });
     }
 

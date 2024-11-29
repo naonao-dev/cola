@@ -42,15 +42,15 @@ using NAO_UNIQUE_LOCK = std::unique_lock<std::mutex>;
 using NAO_READ_LOCK  = std::shared_lock<std::shared_mutex>;
 using NAO_WRITE_LOCK = std::unique_lock<std::shared_mutex>;
 #else
-using NAO_READ_LOCK  = NAO_LOCK_GUARD;   // C++14不支持读写锁，使用mutex替代
-using NAO_WRITE_LOCK = NAO_LOCK_GUARD;
+using NAO_READ_LOCK  = std::lock_guard<std::recursive_mutex>;   // C++14不支持读写锁，使用mutex替代
+using NAO_WRITE_LOCK = std::lock_guard<std::recursive_mutex>;
 #endif
 
 
 template<typename T>
 NStatus __ASSERT_NOT_NULL(T t)
 {
-    return (unlikely(nullptr == t)) ? NErrStatus(NAO_INPUT_IS_NULL) : NStatus();
+    return (unlikely(nullptr == t)) ? NStatus(NAO_INPUT_IS_NULL) : NStatus();
 }
 
 template<typename T, typename... Args>
@@ -104,7 +104,7 @@ NVoid __ASSERT_NOT_NULL_THROW_EXCEPTION(T t, Args... args)
 
 #define NAO_DELETE_PTR_ARRAY(arr)     \
     if (unlikely((arr) != nullptr)) { \
-        delete[] arr;                 \
+        delete[] (arr);               \
         (arr) = nullptr;              \
     }
 

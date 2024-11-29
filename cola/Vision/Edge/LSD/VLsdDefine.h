@@ -5,7 +5,7 @@
  * @Date         : 2024-07-15 19:02:22
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-08-19 15:48:50
+ * @LastEditTime : 2024-11-26 14:15:23
  **/
 #ifndef NAONAO_VLSDDEFINE_H
 #define NAONAO_VLSDDEFINE_H
@@ -76,12 +76,12 @@ NAO_VISION_NAMESPACE_BEGIN
 --------------------------------------------------------------------------------------------------*/
 struct coorlist
 {
-    NInt               x, y;
+    NInt             x, y;
     struct coorlist* next;
 };
 struct point
 {
-    NInt  x, y;
+    NInt x, y;
 };
 
 /*--------------------------------------------------------------------------------------------------
@@ -114,7 +114,7 @@ NVoid error(const char* msg);
 * @Returns:
 * @Others:    https://blog.csdn.net/x356982611/article/details/19922453
 --------------------------------------------------------------------------------------------------*/
-NInt  double_equal(NDouble  a, NDouble  b);
+NInt double_equal(NDouble a, NDouble b);
 
 /*--------------------------------------------------------------------------------------------------
 * @FuncName:
@@ -127,7 +127,7 @@ NInt  double_equal(NDouble  a, NDouble  b);
 * @Returns:
 * @Others:
 --------------------------------------------------------------------------------------------------*/
-NDouble  dist(NDouble  x1, NDouble  y1, NDouble  x2, NDouble  y2);
+NDouble dist(NDouble x1, NDouble y1, NDouble x2, NDouble y2);
 
 /*----------------------- 'list of n-tuple' data type ------------------------*/
 /*--------------------------------------------------------------------------------------------------
@@ -161,20 +161,20 @@ ntl->max_size
 --------------------------------------------------------------------------------------------------*/
 typedef struct ntuple_list_s
 {
-    NUInt  size;       // 数组的个数
-    NUInt  max_size;   // 数组的最大容量，扩容时需要
-    NUInt  dim;        // 维度
-    NDouble *      values;     // 数组
+    NUInt    size;       // 数组的个数
+    NUInt    max_size;   // 数组的最大容量，扩容时需要
+    NUInt    dim;        // 维度
+    NDouble* values;     // 数组
 }* ntuple_list;
 /*-------------------------- 释放链表与内部数组  Free memory used in n-tuple 'in'.----------------------------------------*/
 NVoid free_ntuple_list(ntuple_list input);
 /*------------------------------------------- 新建链表 -------------------------------------------*/
-ntuple_list new_ntuple_list(NUInt  dim);
+ntuple_list new_ntuple_list(NUInt dim);
 /*------------------------------------------- 扩充链表 -------------------------------------------*/
 NVoid enlarge_ntuple_list(ntuple_list n_tuple);
 /*------------------------------------------- 增加7个数字到链表中 -------------------------------------------*/
 // 此时链表的维度是7维
-NVoid add_7tuple(ntuple_list out, NDouble  v1, NDouble  v2, NDouble  v3, NDouble  v4, NDouble  v5, NDouble  v6, NDouble  v7);
+NVoid add_7tuple(ntuple_list out, NDouble v1, NDouble v2, NDouble v3, NDouble v4, NDouble v5, NDouble v6, NDouble v7);
 
 /*----------------------------- Image Data Types -----------------------------*/
 /*--------------------------------------------------------------------------------------------------
@@ -198,18 +198,18 @@ with x and y integer.
 typedef struct image_char_s
 {
     unsigned char* data;
-    NUInt    xsize, ysize;   // 宽度，高度
+    NUInt          xsize, ysize;   // 宽度，高度
 }* image_char;
 
 /*--------------------------------------------释放图像数据 --------------------------------------------*/
 NVoid free_image_char(image_char i);
 
 /*--------------------------------------------创造图像数据--------------------------------------------*/
-image_char new_image_char(NUInt  xsize, NUInt  ysize);
+image_char new_image_char(NUInt xsize, NUInt ysize);
 
 /*--------------------------------------------初始化图像数据--------------------------------------------*/
 // initialized to the value 'fill_value'. 用fill_value的值 初始化图像
-image_char new_image_char_ini(NUInt  xsize, NUInt  ysize, unsigned char fill_value);
+image_char new_image_char_ini(NUInt xsize, NUInt ysize, unsigned char fill_value);
 
 /*--------------------------------------------------------------------------------------------------
 * @FuncName:
@@ -227,16 +227,16 @@ with x and y integer.
 --------------------------------------------------------------------------------------------------*/
 typedef struct image_int_s
 {
-    NInt *         data;
-    NUInt  xsize, ysize;
+    NInt* data;
+    NUInt xsize, ysize;
 }* image_int;
 
 
 /*--------------------------------------------创造图像数据--------------------------------------------*/
-image_int new_image_int(NUInt  xsize, NUInt  ysize);
+image_int new_image_int(NUInt xsize, NUInt ysize);
 /*--------------------------------------------初始化图像数据--------------------------------------------*/
 // initialized to the value 'fill_value'. 用fill_value的值 初始化图像
-image_int new_image_int_ini(NUInt  xsize, NUInt  ysize, NInt  fill_value);
+image_int new_image_int_ini(NUInt xsize, NUInt ysize, NInt fill_value);
 
 /*--------------------------------------------------------------------------------------------------
 * @FuncName:
@@ -254,17 +254,17 @@ with x and y integer.
 --------------------------------------------------------------------------------------------------*/
 typedef struct image_double_s
 {
-    NDouble *      data;
-    NUInt  xsize, ysize;
+    NDouble* data;
+    NUInt    xsize, ysize;
 }* image_double;
 
 /*--------------------------------------------释放图像数据 --------------------------------------------*/
 NVoid free_image_double(image_double i);
 /*--------------------------------------------创造图像数据--------------------------------------------*/
-image_double new_image_double(NUInt  xsize, NUInt  ysize);
+image_double new_image_double(NUInt xsize, NUInt ysize);
 /*--------------------------------------------初始化图像数据--------------------------------------------*/
 // initialized to the value 'data'. 用data的值 初始化图像
-image_double new_image_double_ptr(NUInt  xsize, NUInt  ysize, NDouble * data);
+image_double new_image_double_ptr(NUInt xsize, NUInt ysize, NDouble* data);
 
 NAO_VISION_NAMESPACE_END
 NAO_NAMESPACE_END

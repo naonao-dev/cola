@@ -21,6 +21,7 @@ https://zhuanlan.zhihu.com/p/268884807
 #include <Eigen/Eigenvalues>
 #include <Eigen/Geometry>
 #include <vector>
+#include <cstdlib>
 
 NAO_NAMESPACE_BEGIN
 NAO_VISION_NAMESPACE_BEGIN

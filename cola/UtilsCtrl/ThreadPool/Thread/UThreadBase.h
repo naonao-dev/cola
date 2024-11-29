@@ -6,8 +6,8 @@
  * @LastEditors  : naonao
  * @LastEditTime : 2024-06-20 19:53:51
  **/
-#ifndef CGRAPH_UTHREADBASE_H
-#define CGRAPH_UTHREADBASE_H
+#ifndef NAO_UTHREADBASE_H
+#define NAO_UTHREADBASE_H
 
 #include <thread>
 
@@ -143,11 +143,9 @@ protected:
      * 循环处理任务
      * @return
      */
-    NStatus loopProcess()
+    NVoid loopProcess()
     {
-        NAO_FUNCTION_BEGIN
-        NAO_ASSERT_NOT_NULL(config_)
-
+        NAO_ASSERT_NOT_NULL_THROW_ERROR(config_)
         if (config_->batch_task_enable_) {
             while (done_) {
                 processTasks();   // 批量任务获取执行接口
@@ -158,8 +156,6 @@ protected:
                 processTask();   // 单个任务获取执行接口
             }
         }
-
-        NAO_FUNCTION_END
     }
 
 
@@ -219,13 +215,7 @@ private:
      * @param policy
      * @return
      */
-    static int calcPolicy(int policy)
-    {
-        return (NAO_THREAD_SCHED_OTHER == policy || NAO_THREAD_SCHED_RR == policy ||
-                NAO_THREAD_SCHED_FIFO == policy)
-                   ? policy
-                   : NAO_THREAD_SCHED_OTHER;
-    }
+    static NInt calcPolicy(int policy) { return (NAO_THREAD_SCHED_OTHER == policy || NAO_THREAD_SCHED_RR == policy || NAO_THREAD_SCHED_FIFO == policy) ? policy : NAO_THREAD_SCHED_OTHER; }
 
 
     /**
@@ -234,26 +224,20 @@ private:
      * @param priority
      * @return
      */
-    static int calcPriority(int priority)
-    {
-        return (priority >= NAO_THREAD_MIN_PRIORITY && priority <= NAO_THREAD_MAX_PRIORITY)
-                   ? priority
-                   : NAO_THREAD_MIN_PRIORITY;
-    }
+    static NInt calcPriority(int priority) { return (priority >= NAO_THREAD_MIN_PRIORITY && priority <= NAO_THREAD_MAX_PRIORITY) ? priority : NAO_THREAD_MIN_PRIORITY; }
 
 
 protected:
-    bool          done_;                 // 线程状态标记
-    bool          is_init_;              // 标记初始化状态
-    bool          is_running_;           // 是否正在执行
-    int           type_           = 0;   // 用于区分线程类型（主线程、辅助线程）
-    unsigned long total_task_num_ = 0;   // 处理的任务的数字
+    NBool  done_;                 // 线程状态标记
+    NBool  is_init_;              // 标记初始化状态
+    NBool  is_running_;           // 是否正在执行
+    NInt   type_           = 0;   // 用于区分线程类型（主线程、辅助线程）
+    NULong total_task_num_ = 0;   // 处理的任务的数字
 
-    UAtomicQueue<UTask>* pool_task_queue_;   // 用于存放线程池中的普通任务
-    UAtomicPriorityQueue<UTask>*
-        pool_priority_task_queue_;   // 用于存放线程池中的包含优先级任务的队列，仅辅助线程可以执行
-    UThreadPoolConfigPtr config_ = nullptr;   // 配置参数信息
-    UMetrics             metrics_;            // 线程中的指标信息
+    UAtomicQueue<UTask>*         pool_task_queue_;            // 用于存放线程池中的普通任务
+    UAtomicPriorityQueue<UTask>* pool_priority_task_queue_;   // 用于存放线程池中的包含优先级任务的队列，仅辅助线程可以执行
+    UThreadPoolConfigPtr         config_ = nullptr;           // 配置参数信息
+    UMetrics                     metrics_;                    // 线程中的指标信息
 
     std::thread             thread_;   // 线程类
     std::mutex              mutex_;

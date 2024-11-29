@@ -5,7 +5,7 @@
  * @Date         : 2024-08-09 12:04:59
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-08-09 20:27:47
+ * @LastEditTime : 2024-11-26 14:06:06
  * @Copyright (c) 2024 by G, All Rights Reserved.
  **/
 #include "VContours.h"
@@ -38,7 +38,7 @@ ClipperLib::Paths VContours::contours2paths(const std::vector<std::vector<cv::Po
         for (const auto& pt : contour) {
             path << ClipperLib::IntPoint(pt.x, pt.y);
         }
-        paths.push_back(path);
+        paths.emplace_back(path);
     }
     return paths;
 }
@@ -51,6 +51,7 @@ std::vector<cv::Point> VContours::path2contour(const ClipperLib::Path& path)
     }
     return contour;
 }
+
 std::vector<std::vector<cv::Point>> VContours::path2contours(const ClipperLib::Paths& paths)
 {
     std::vector<std::vector<cv::Point>> contours;
@@ -59,28 +60,20 @@ std::vector<std::vector<cv::Point>> VContours::path2contours(const ClipperLib::P
         for (const auto& pt : path) {
             contour.emplace_back(pt.X, pt.Y);
         }
-        contours.push_back(contour);
+        contours.emplace_back(contour);
     }
     return contours;
 }
 
 std::vector<cv::Point> VContours::contours_and(const std::vector<cv::Point>& lcontour, const std::vector<cv::Point>& rcontour)
 {
-
-    ClipperLib::Path subject = contour2path(lcontour);
-    ClipperLib::Path clip    = contour2path(rcontour);
-    // 创建Clipper对象
-    ClipperLib::Clipper c;
-    // 添加路径到Clipper对象
-    c.AddPath(subject, ClipperLib::ptSubject, true);
+    ClipperLib::Path    subject = contour2path(lcontour);
+    ClipperLib::Path    clip    = contour2path(rcontour);
+    ClipperLib::Clipper c;                             // 创建Clipper对象
+    c.AddPath(subject, ClipperLib::ptSubject, true);   // 添加路径到Clipper对象
     c.AddPath(clip, ClipperLib::ptClip, true);
-
-    // 结果路径
-    ClipperLib::Paths solution;
-
-    // 计算交集
-    c.Execute(ClipperLib::ctIntersection, solution, ClipperLib::pftEvenOdd, ClipperLib::pftEvenOdd);
-
+    ClipperLib::Paths solution;                                                                        // 结果路径
+    c.Execute(ClipperLib::ctIntersection, solution, ClipperLib::pftEvenOdd, ClipperLib::pftEvenOdd);   // 计算交集
     std::vector<cv::Point> dst;
     for (const ClipperLib::Path& path : solution) {
         for (const ClipperLib::IntPoint& pt : path) {
@@ -92,20 +85,13 @@ std::vector<cv::Point> VContours::contours_and(const std::vector<cv::Point>& lco
 
 std::vector<cv::Point> VContours::contours_or(const std::vector<cv::Point>& lcontour, const std::vector<cv::Point>& rcontour)
 {
-
-    ClipperLib::Path subject = contour2path(lcontour);
-    ClipperLib::Path clip    = contour2path(rcontour);
-    // 创建Clipper对象
-    ClipperLib::Clipper c;
-    // 添加路径到Clipper对象
-    c.AddPath(subject, ClipperLib::ptSubject, true);
+    ClipperLib::Path    subject = contour2path(lcontour);
+    ClipperLib::Path    clip    = contour2path(rcontour);
+    ClipperLib::Clipper c;                             // 创建Clipper对象
+    c.AddPath(subject, ClipperLib::ptSubject, true);   // 添加路径到Clipper对象
     c.AddPath(clip, ClipperLib::ptClip, true);
-
-    // 结果路径
-    ClipperLib::Paths solution;
-
-    // 计算交集
-    c.Execute(ClipperLib::ctUnion, solution, ClipperLib::pftEvenOdd, ClipperLib::pftEvenOdd);
+    ClipperLib::Paths solution;                                                                 // 结果路径
+    c.Execute(ClipperLib::ctUnion, solution, ClipperLib::pftEvenOdd, ClipperLib::pftEvenOdd);   // 计算交集
     std::vector<cv::Point> dst;
     for (const ClipperLib::Path& path : solution) {
         for (const ClipperLib::IntPoint& pt : path) {
@@ -117,19 +103,13 @@ std::vector<cv::Point> VContours::contours_or(const std::vector<cv::Point>& lcon
 
 std::vector<cv::Point> VContours::contours_not(const std::vector<cv::Point>& lcontour, const std::vector<cv::Point>& rcontour)
 {
-    ClipperLib::Path subject = contour2path(lcontour);
-    ClipperLib::Path clip    = contour2path(rcontour);
-    // 创建Clipper对象
-    ClipperLib::Clipper c;
-    // 添加路径到Clipper对象
-    c.AddPath(subject, ClipperLib::ptSubject, true);
+    ClipperLib::Path    subject = contour2path(lcontour);
+    ClipperLib::Path    clip    = contour2path(rcontour);
+    ClipperLib::Clipper c;                             // 创建Clipper对象
+    c.AddPath(subject, ClipperLib::ptSubject, true);   // 添加路径到Clipper对象
     c.AddPath(clip, ClipperLib::ptClip, true);
-
-    // 结果路径
-    ClipperLib::Paths solution;
-
-    // 计算交集
-    c.Execute(ClipperLib::ctDifference, solution, ClipperLib::pftEvenOdd, ClipperLib::pftEvenOdd);
+    ClipperLib::Paths solution;                                                                      // 结果路径
+    c.Execute(ClipperLib::ctDifference, solution, ClipperLib::pftEvenOdd, ClipperLib::pftEvenOdd);   // 计算交集
     std::vector<cv::Point> dst;
     for (const ClipperLib::Path& path : solution) {
         for (const ClipperLib::IntPoint& pt : path) {
@@ -141,19 +121,13 @@ std::vector<cv::Point> VContours::contours_not(const std::vector<cv::Point>& lco
 
 std::vector<cv::Point> VContours::contours_xor(const std::vector<cv::Point>& lcontour, const std::vector<cv::Point>& rcontour)
 {
-    ClipperLib::Path subject = contour2path(lcontour);
-    ClipperLib::Path clip    = contour2path(rcontour);
-    // 创建Clipper对象
-    ClipperLib::Clipper c;
-    // 添加路径到Clipper对象
-    c.AddPath(subject, ClipperLib::ptSubject, true);
+    ClipperLib::Path    subject = contour2path(lcontour);
+    ClipperLib::Path    clip    = contour2path(rcontour);
+    ClipperLib::Clipper c;                             // 创建Clipper对象
+    c.AddPath(subject, ClipperLib::ptSubject, true);   // 添加路径到Clipper对象
     c.AddPath(clip, ClipperLib::ptClip, true);
-
-    // 结果路径
-    ClipperLib::Paths solution;
-
-    // 计算交集
-    c.Execute(ClipperLib::ctXor, solution, ClipperLib::pftEvenOdd, ClipperLib::pftEvenOdd);
+    ClipperLib::Paths solution;                                                               // 结果路径
+    c.Execute(ClipperLib::ctXor, solution, ClipperLib::pftEvenOdd, ClipperLib::pftEvenOdd);   // 计算交集
     std::vector<cv::Point> dst;
     for (const ClipperLib::Path& path : solution) {
         for (const ClipperLib::IntPoint& pt : path) {
@@ -190,5 +164,6 @@ NDouble VContours::contours_area(const std::vector<cv::Point>& contour)
     ClipperLib::Path path = contour2path(contour);
     return ClipperLib::Area(path);
 }
+
 NAO_VISION_NAMESPACE_END
 NAO_NAMESPACE_END

@@ -5,7 +5,7 @@
  * @Date         : 2024-06-28 10:35:36
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-09-05 11:48:52
+ * @LastEditTime : 2024-11-15 11:31:27
  **/
 #ifndef NAO_DPIPELINE_H
 #define NAO_DPIPELINE_H
@@ -132,13 +132,13 @@ public:
      * 根据传入的信息，创建Group信息
      * @tparam T
      * @param elements
-     * @param dependElements
+     * @param depends
      * @param name
      * @param loop
      * @return
      */
     template<typename TGroup, c_enable_if_t<std::is_base_of<DGroup, TGroup>::value, int> = 0>
-    TGroup* createDGroup(const DElementPtrArr& elements, const DElementPtrSet& dependElements = std::initializer_list<DElementPtr>(), const std::string& name = NAO_EMPTY,
+    TGroup* createDGroup(const DElementPtrArr& elements, const DElementPtrSet& depends = std::initializer_list<DElementPtr>(), const std::string& name = NAO_EMPTY,
                          NSize loop = NAO_DEFAULT_LOOP_TIMES);
 
     /**
@@ -147,108 +147,104 @@ public:
      * 如果注册的是GGroup信息，则需外部提前生成，然后注册进来
      * @tparam T
      * @param elementRef
-     * @param dependElements
+     * @param depends
      * @param name
      * @param loop
      * @return
      */
     template<typename T, c_enable_if_t<std::is_base_of<DElement, T>::value, int> = 0>
-    NStatus registerDElement(DElementPPtr elementRef, const DElementPtrSet& dependElements = std::initializer_list<DElementPtr>(), const std::string& name = NAO_EMPTY,
-                             NSize loop = NAO_DEFAULT_LOOP_TIMES);
+    NStatus registerDElement(DElementPPtr elementRef, const DElementPtrSet& depends = std::initializer_list<DElementPtr>(), const std::string& name = NAO_EMPTY, NSize loop = NAO_DEFAULT_LOOP_TIMES);
 
     /**
      * 在图中注册一个模板Element信息
      * @tparam TNode
      * @tparam Args
      * @param elementRef
-     * @param dependElements
+     * @param depends
      * @return
      */
     template<typename TNode, typename... Args, c_enable_if_t<std::is_base_of<DTemplateNode<Args...>, TNode>::value, int> = 0>
-    NStatus registerDElement(DTemplateNodePtr<Args...>* elementRef, const DElementPtrSet& dependElements, Args... args);
+    NStatus registerDElement(DTemplateNodePtr<Args...>* elementRef, const DElementPtrSet& depends, Args... args);
 
     /**
      * 注册一个 node
      * @tparam T
-     * @param dependElements
+     * @param depends
      * @param name
      * @param loop
      * @return
      */
     template<typename TNode, c_enable_if_t<std::is_base_of<DNode, TNode>::value, int> = 0>
-    TNode* registerDNode(const DElementPtrSet& dependElements = std::initializer_list<DElementPtr>(), const std::string& name = NAO_EMPTY, NSize loop = NAO_DEFAULT_LOOP_TIMES);
+    TNode* registerDNode(const DElementPtrSet& depends = std::initializer_list<DElementPtr>(), const std::string& name = NAO_EMPTY, NSize loop = NAO_DEFAULT_LOOP_TIMES);
 
     /**
      * 注册一个 node
      * @tparam TNode
      * @tparam Args
-     * @param dependElements
+     * @param depends
      * @param args
      * @return
      */
     template<typename TNode, typename... Args, c_enable_if_t<std::is_base_of<DTemplateNode<Args...>, TNode>::value, int> = 0>
-    TNode* registerDNode(const DElementPtrSet& dependElements, Args... args);
+    TNode* registerDNode(const DElementPtrSet& depends, Args... args);
 
     /**
      * 注册一个节点信息
      * @param nodeRef
-     * @param dependElements
+     * @param depends
      * @param name
      * @param loop
      * @return
      */
-    NStatus registerDNode(DElementPPtr nodeRef, const DElementPtrSet& dependElements = std::initializer_list<DElementPtr>(), const std::string& name = NAO_EMPTY, NSize loop = NAO_DEFAULT_LOOP_TIMES);
+    NStatus registerDNode(DElementPPtr nodeRef, const DElementPtrSet& depends = std::initializer_list<DElementPtr>(), const std::string& name = NAO_EMPTY, NSize loop = NAO_DEFAULT_LOOP_TIMES);
 
     /**
      * 注册一个组信息（推荐使用）
      * @param groupRef
-     * @param dependElements
+     * @param depends
      * @param name
      * @param loop
      * @return
      */
-    NStatus registerDGroup(DElementPPtr groupRef, const DElementPtrSet& dependElements = std::initializer_list<DElementPtr>(), const std::string& name = NAO_EMPTY,
-                           NSize loop = NAO_DEFAULT_LOOP_TIMES);
+    NStatus registerDGroup(DElementPPtr groupRef, const DElementPtrSet& depends = std::initializer_list<DElementPtr>(), const std::string& name = NAO_EMPTY, NSize loop = NAO_DEFAULT_LOOP_TIMES);
 
 
     /**
      * 注册function类型的内容，模板特化
      * @tparam GFunction
      * @param functionRef
-     * @param dependElements
+     * @param depends
      * @param name
      * @param loop
      * @return
      */
     template<typename DFunction>
-    NStatus registerDElement(DFunctionPPtr functionRef, const DElementPtrSet& dependElements = std::initializer_list<DElementPtr>(), const std::string& name = NAO_EMPTY,
-                             NSize loop = NAO_DEFAULT_LOOP_TIMES);
+    NStatus registerDElement(DFunctionPPtr functionRef, const DElementPtrSet& depends = std::initializer_list<DElementPtr>(), const std::string& name = NAO_EMPTY, NSize loop = NAO_DEFAULT_LOOP_TIMES);
 
     /**
      * 注册fence类型的内容，模板特化
      * @tparam GFence
      * @param fenceRef
-     * @param dependElements
+     * @param depends
      * @param name
      * @param loop
      * @return
      */
     template<typename DFence>
-    NStatus registerDElement(DFencePPtr fenceRef, const DElementPtrSet& dependElements = std::initializer_list<DElementPtr>(), const std::string& name = NAO_EMPTY,
-                             NSize loop = NAO_DEFAULT_LOOP_TIMES);
+    NStatus registerDElement(DFencePPtr fenceRef, const DElementPtrSet& depends = std::initializer_list<DElementPtr>(), const std::string& name = NAO_EMPTY, NSize loop = NAO_DEFAULT_LOOP_TIMES);
 
     /**
      * 注册GCoordinator类型的内容，模板特化
      * @tparam GCoordinator
      * @tparam SIZE
      * @param coordinatorRef
-     * @param dependElements
+     * @param depends
      * @param name
      * @param loop
      * @return
      */
     template<typename DCoordinator, NInt SIZE>
-    NStatus registerDElement(DCoordinatorPPtr<SIZE> coordinatorRef, const DElementPtrSet& dependElements = std::initializer_list<DElementPtr>(), const std::string& name = NAO_EMPTY,
+    NStatus registerDElement(DCoordinatorPPtr<SIZE> coordinatorRef, const DElementPtrSet& depends = std::initializer_list<DElementPtr>(), const std::string& name = NAO_EMPTY,
                              NSize loop = NAO_DEFAULT_LOOP_TIMES);
 
     /**
@@ -320,21 +316,13 @@ public:
     DPipeline* setSharedThreadPool(UThreadPoolPtr ptr);
 
     /**
-     * 设置在执行完成后，是否校验整体执行逻辑
-     * @param enable
-     * @return
-     * @notice 默认校验。如果确定流程正常，可以考虑取消校验流程，从而降低整体耗时
-     */
-    DPipeline* setAutoCheck(NBool enable);
-
-    /**
      * 获取最大并发度
      * @return
      * @notice 暂时仅支持dag中所有内容均为 node的情况下计算。返回的值，是理论最大线程数，不是最优值
      */
     NSize getMaxPara();
 
-     /**
+    /**
      * 针对图结构，做多余边剪裁
      * @return 返回值表示裁剪了多少条信息
      */
@@ -382,12 +370,12 @@ private:
     /**
      * 内部真实一个 element 信息
      * @param element
-     * @param dependElements
+     * @param depends
      * @param name
      * @param loop
      * @return
      */
-    NStatus innerRegister(DElementPtr element, const DElementPtrSet& dependElements, const std::string& name, NSize loop);
+    NStatus innerRegister(DElementPtr element, const DElementPtrSet& depends, const std::string& name, NSize loop);
 
     /** 不允许外部赋值和构造 */
     NAO_NO_ALLOWED_COPY(DPipeline)

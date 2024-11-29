@@ -5,7 +5,7 @@
  * @Date         : 2024-06-26 11:36:19
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-09-05 11:13:59
+ * @LastEditTime : 2024-11-15 14:44:11
  **/
 
 #include "DDynamicEngine.h"
@@ -16,10 +16,13 @@ NStatus DDynamicEngine::setup(const DSortedDElementPtrSet& elements)
 {
     NAO_FUNCTION_BEGIN
     /**
-     * 1. 标记数据，比如有多少个结束element等
-     * 2. 标记哪些数据，是linkable 的
-     * 3. 分析当前dag类型信息
+     * 1. 判断是否是 dag 结构
+     * 2. 标记数据，比如有多少个结束element等
+     * 3. 标记哪些数据，是linkable 的
+     * 4. 分析当前dag类型信息
      */
+    NAO_RETURN_ERROR_STATUS_BY_CONDITION(!DEngine::isDag(elements),
+                                            "it is not a dag struct");
     mark(elements);
     link(elements);
     analysisDagType(elements);
@@ -42,24 +45,6 @@ NStatus DDynamicEngine::run()
         NAO_RETURN_ERROR_STATUS("unknown engine dag type")
     }
     status = cur_status_;
-    NAO_FUNCTION_END
-}
-
-
-NStatus DDynamicEngine::afterRunCheck()
-{
-    NAO_FUNCTION_BEGIN
-    /**
-     * 纯串行和纯并行 是不需要做结果校验的
-     * 但是普通的dag，后期还是校验一下为好
-     * 这里也可以通过外部接口来关闭
-     */
-    if (internal::DEngineDagType::COMMON == dag_type_) {
-        for (DElementCPtr element : total_element_arr_) {
-            NAO_RETURN_ERROR_STATUS_BY_CONDITION(!element->done_, element->getName() + ": dynamic engine, check not run it...")
-        }
-    }
-
     NAO_FUNCTION_END
 }
 
@@ -124,7 +109,7 @@ NVoid DDynamicEngine::process(DElementPtr element, NBool affinity)
     }
 
     const auto& exec = [this, element] {
-        element->beforeRun();
+        element->refresh();
         const NStatus& curStatus = element->fatProcessor(NFunctionType::RUN);
         if (unlikely(curStatus.isErr())) {
             // 当且仅当整体状正常，且当前状态异常的时候，进入赋值逻辑。确保不重复赋值

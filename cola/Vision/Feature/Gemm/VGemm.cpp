@@ -5,7 +5,7 @@
  * @Date         : 2024-07-18 16:45:41
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-20 12:16:24
+ * @LastEditTime : 2024-11-26 15:18:55
  **/
 
 #include "VGemm.h"
@@ -55,7 +55,9 @@ VGemm::VGemm()
     : grayLevel_(16)
 {
 }
+
 VGemm::~VGemm() = default;
+
 NVoid VGemm::initGGCM(VecGGCM& vecGGCM, NInt size)
 {
     assert(size == grayLevel_);

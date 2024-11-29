@@ -59,7 +59,7 @@ NStatus DGroup::addElement(DElementPtr element)
 NVoid DGroup::dumpGroupLabelBegin(std::ostream& oss)
 {
     oss << "subgraph ";
-    oss << "cluster_p" << this;   // cluster_ 是 graphviz的关键字，和CGraph中GCluster逻辑无关
+    oss << "cluster_p" << this;   // cluster_ 是 graphviz的关键字，和dag中GCluster逻辑无关
     oss << " {\nlabel=\"";
 
     if (name_.empty()) {

@@ -45,10 +45,10 @@ void test_trie()
     UTrie trie;
     trie.insert("hello");
     trie.insert("help");
-    trie.insert("cgraph");   // 插入几个单词
+    trie.insert("dag");   // 插入几个单词
 
     NAO_ECHO("find [hello] result is : [%i]", trie.find("hello"));
-    NAO_ECHO("find [cgraph] result is : [%i]", trie.find("cgraph"));
+    NAO_ECHO("find [dag] result is : [%i]", trie.find("dag"));
 
     trie.eraser("hello");   // 删去hello信息
     NAO_ECHO("eraser [hello], then find it, result is : [%i]", trie.find("hello"));
@@ -63,10 +63,10 @@ void test_trie_v2()
     UTrieV2 trieV2;
     trieV2.insert("hello");
     trieV2.insert("help");
-    trieV2.insert("cgraph");   // 插入几个单词
+    trieV2.insert("dag");   // 插入几个单词
 
     NAO_ECHO("find [hello] result is : [%i]", trieV2.find("hello"));
-    NAO_ECHO("find [cgraph] result is : [%i]", trieV2.find("cgraph"));
+    NAO_ECHO("find [dag] result is : [%i]", trieV2.find("dag"));
 
     trieV2.eraser("hello");   // 删去hello信息
     NAO_ECHO("eraser [hello], then find it, result is : [%i]", trieV2.find("hello"));
