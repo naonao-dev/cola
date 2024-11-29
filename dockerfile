@@ -1,4 +1,4 @@
-﻿FROM ubuntu:23.04
+﻿FROM ubuntu:24.04
 
 # https://github.com/boostorg/mysql/blob/6d08247bab36da0cb9360f7c932620e167ec390b/tools/docker/build-gcc13.dockerfile#L13
 ENV NAO_PATH /home/COLA
@@ -7,9 +7,9 @@ ENV XMAKE_ROOT=y
 
 WORKDIR $NAO_PATH
 
-# RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
-# RUN sed -i 's/security.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
-# RUN sed -i 's/archive.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
+RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
+RUN sed -i 's/security.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
+RUN sed -i 's/archive.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
 
 RUN \
     apt-get update && \
