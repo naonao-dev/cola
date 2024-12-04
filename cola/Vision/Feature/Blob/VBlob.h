@@ -5,7 +5,7 @@
  * @Date         : 2024-07-31 11:24:32
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-07-31 17:23:28
+ * @LastEditTime : 2024-12-04 13:44:04
  * @Copyright (c) 2024 by G, All Rights Reserved.
  **/
 #ifndef NAONAO_VBLOB_H
@@ -35,6 +35,8 @@ public:
     std::vector<tBLOB_FEATURE> DoDefectBlobSingleJudgment(const std::vector<STRU_DEFECT_ITEM>& EngineerBlockDefectJudge);
     NBool                      DoFiltering(tBLOB_FEATURE& tBlobResult, NInt nBlobFilter, NInt nSign, NDouble dValue);
     NBool                      Compare(NDouble dFeatureValue, NInt nSign, NDouble dValue);
+    NInt                       getSignFromSymbol(const std::string& symbol);
+    NInt                       getIndex(const std::string& feature_str);
 
 protected:
     NBool                      bComplete_;    // 确认Blob是否已完成。
