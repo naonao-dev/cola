@@ -1,4 +1,4 @@
-﻿FROM ubuntu:23.04
+﻿FROM ubuntu:24.04
 
 # https://github.com/boostorg/mysql/blob/6d08247bab36da0cb9360f7c932620e167ec390b/tools/docker/build-gcc13.dockerfile#L13
 ENV NAO_PATH /home/COLA

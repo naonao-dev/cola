@@ -5,7 +5,7 @@
  * @Date         : 2024-07-31 14:02:49
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-11-26 15:22:30
+ * @LastEditTime : 2024-12-04 13:43:55
  * @Copyright (c) 2024 by G, All Rights Reserved.
  **/
 #include "VBlob.h"
@@ -48,6 +48,11 @@ NBool VBlob::DoBlobCalculate(cv::Mat ThresholdBuffer, cv::Mat GrayBuffer, NInt n
     if (ThresholdBuffer.channels() != 1) {
         return false;
     }
+
+    if (GrayBuffer.channels() != 1) {
+        cv::cvtColor(GrayBuffer, GrayBuffer, cv::COLOR_BGR2GRAY);
+    }
+
     // 如果Gray画面不存在X&1频道
     NBool bGrayEmpty = false;
     if (GrayBuffer.empty() || GrayBuffer.channels() != 1) {
@@ -135,7 +140,7 @@ NBool VBlob::DoFeatureBasic_8bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& 
         BlobResult_.at(nBlobNum).rectBox.height = matStats.at<int>(idx, cv::CC_STAT_HEIGHT);
 
         // 对象周围(用于背景GV)
-        NInt nOffSet = 20;
+        NInt nOffSet = 0;
 
         NInt nSX = BlobResult_.at(nBlobNum).rectBox.x - nOffSet;
         NInt nSY = BlobResult_.at(nBlobNum).rectBox.y - nOffSet;
@@ -162,6 +167,7 @@ NBool VBlob::DoFeatureBasic_8bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& 
         }
 
         cv::Rect rectTemp(nSX, nSY, nEX - nSX + 1, nEY - nSY + 1);
+        BlobResult_.at(nBlobNum).FeaRectROI = rectTemp;
 
         NLLong nCount_in  = 0;
         NLLong nCount_out = 0;
@@ -249,6 +255,8 @@ NBool VBlob::DoFeatureBasic_8bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& 
         // min,获取max GV
         NDouble valMin = NAN;
         NDouble valMax = NAN;
+        NDouble ta, tb;
+        cv::minMaxIdx(matTmp_src, &ta, &tb);
         cv::minMaxLoc(matTmp_src, &valMin, &valMax, 0, 0, matTemp);
         BlobResult_.at(nBlobNum).nMinGV = static_cast<long>(valMin);
         BlobResult_.at(nBlobNum).nMaxGV = static_cast<long>(valMax);
@@ -308,6 +316,7 @@ NBool VBlob::DoFeatureBasic_8bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat& 
         BlobResult_.at(nBlobNum).fMinBoxRatio = BlobResult_.at(nBlobNum).fMinBoxArea / static_cast<float>(BlobResult_.at(nBlobNum).nArea);
         // choikwangil
         BlobResult_.at(nBlobNum).fMeanAreaRatio = BlobResult_.at(nBlobNum).fMeanGV / static_cast<float>(BlobResult_.at(nBlobNum).nArea);
+        BlobResult_.at(nBlobNum).fDefectMeanGV  = (tb - ta);
         // 取消分配
         matTmp_src.release();
         matTmp_label.release();
@@ -337,7 +346,7 @@ NBool VBlob::DoFeatureBasic_16bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat&
         BlobResult_.at(nBlobNum).rectBox.height = matStats.at<int>(idx, cv::CC_STAT_HEIGHT);
 
         // 对象周围(用于背景GV)
-        NInt nOffSet = 20;
+        NInt nOffSet = 0;
         NInt nSX     = BlobResult_.at(nBlobNum).rectBox.x - nOffSet;
         NInt nSY     = BlobResult_.at(nBlobNum).rectBox.y - nOffSet;
         NInt nEX     = BlobResult_.at(nBlobNum).rectBox.x + BlobResult_.at(nBlobNum).rectBox.width + nOffSet + nOffSet;
@@ -357,6 +366,7 @@ NBool VBlob::DoFeatureBasic_16bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat&
         }
 
         cv::Rect rectTemp(nSX, nSY, nEX - nSX + 1, nEY - nSY + 1);
+        BlobResult_.at(nBlobNum).FeaRectROI = rectTemp;
 
         NLLong nCount_in  = 0;
         NLLong nCount_out = 0;
@@ -449,6 +459,8 @@ NBool VBlob::DoFeatureBasic_16bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat&
         // min,获取max GV
         NDouble valMin = NAN;
         NDouble valMax = NAN;
+        NDouble ta, tb;
+        cv::minMaxIdx(matTmp_src, &ta, &tb);
         cv::minMaxLoc(matTmp_src, &valMin, &valMax, 0, 0, matTemp);
         BlobResult_.at(nBlobNum).nMinGV = static_cast<long>(valMin);
         BlobResult_.at(nBlobNum).nMaxGV = static_cast<long>(valMax);
@@ -513,6 +525,7 @@ NBool VBlob::DoFeatureBasic_16bit(cv::Mat& matLabel, cv::Mat& matStats, cv::Mat&
         BlobResult_.at(nBlobNum).fMinBoxRatio = BlobResult_.at(nBlobNum).fMinBoxArea / static_cast<float>(BlobResult_.at(nBlobNum).nArea);
         // choikwangil
         BlobResult_.at(nBlobNum).fMeanAreaRatio = BlobResult_.at(nBlobNum).fMeanGV / static_cast<float>(BlobResult_.at(nBlobNum).nArea);
+        BlobResult_.at(nBlobNum).fDefectMeanGV  = (tb - ta);
         // 取消分配
         matTmp_src.release();
         matTmp_label.release();
@@ -529,6 +542,9 @@ NBool VBlob::DoBlobCalculate(cv::Mat ThresholdBuffer, cv::Rect rectROI, cv::Mat 
     }
     if (ThresholdBuffer.channels() != 1) {
         return false;
+    }
+    if (GrayBuffer.channels() != 1) {
+        cv::cvtColor(GrayBuffer, GrayBuffer, cv::COLOR_BGR2GRAY);
     }
     NBool bGrayEmpty = false;
     if (GrayBuffer.empty() || GrayBuffer.channels() != 1) {
@@ -837,5 +853,32 @@ NBool VBlob::Compare(NDouble dFeatureValue, NInt nSign, NDouble dValue)
     return bRes;
 }
 
+int VBlob::getSignFromSymbol(const std::string& symbol)
+{
+    if (symbol == "=")
+        return 0;
+    else if (symbol == "<>")
+        return 1;
+    else if (symbol == ">")
+        return 2;
+    else if (symbol == "<")
+        return 3;
+    else if (symbol == ">=")
+        return 4;
+    else if (symbol == "<=")
+        return 5;
+    else if (symbol == ">||")
+        return 6;
+    else if (symbol == "||<")
+        return 7;
+    else
+        return -1;
+}
+int VBlob::getIndex(const std::string& feature_str)
+{
+    if (auto it = feature_idx.find(feature_str); it != feature_idx.end()) {
+        return it->second;
+    }
+}
 NAO_VISION_NAMESPACE_END
 NAO_NAMESPACE_END
