@@ -5,7 +5,7 @@
  * @Date         : 2024-06-28 10:36:10
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-11-15 11:38:23
+ * @LastEditTime : 2024-12-04 15:12:30
  */
 #ifndef NAO_DPIPELINE_INL
 #define NAO_DPIPELINE_INL
@@ -141,7 +141,6 @@ TGroup* DPipeline::createDGroup(const DElementPtrArr& elements, const DElementPt
     for (DElementPtr element : elements)
     {
         status += group->addElement(element);
-        element->belong_ = group;   // 从属于这个group的信息
     }
     NAO_THROW_EXCEPTION_BY_STATUS(status)
 
@@ -196,7 +195,7 @@ DPipelinePtr DPipeline::addDDaemon(NMSec ms, Args&&... args)
     NAO_ASSERT_INIT_THROW_ERROR(false)
     NAO_ASSERT_NOT_NULL_THROW_ERROR(param_manager_, daemon_manager_)
 
-    auto daemon = UAllocator::safeMallocTemplateNObject<TDaemon>(std::forward<Args&&>(args)...);
+    auto daemon = NAllocator::safeMallocTemplateNObject<TDaemon>(std::forward<Args&&>(args)...);
     daemon->setInterval(ms);
     daemon->setGParamManager(this->param_manager_);
     daemon->setGEventManager(this->event_manager_);

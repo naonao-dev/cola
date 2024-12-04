@@ -54,7 +54,7 @@ private:
     DAspectPtrArr aspect_arr_;   // 存储aspect的容器
 
     friend class DElement;
-    friend class UAllocator;
+    friend class NAllocator;
 };
 
 using DAspectManagerPtr = DAspectManager*;

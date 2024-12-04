@@ -5,7 +5,7 @@
  * @Date         : 2024-06-24 16:59:36
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-11-15 13:51:23
+ * @LastEditTime : 2024-12-04 14:44:32
  **/
 #ifndef NAO_DMESSAGEMANAGER_H
 #define NAO_DMESSAGEMANAGER_H
@@ -47,7 +47,7 @@ public:
         }
         else {
             // 创建一个 topic信息
-            auto message = UAllocator::safeMallocTemplateNObject<DMessage<TImpl>>(size);
+            auto message = NAllocator::safeMallocTemplateNObject<DMessage<TImpl>>(size);
             send_recv_message_map_.insert(std::pair<const std::string&, DMessagePtr<T>>(innerTopic, DMessagePtr<T>(message)));
         }
 
@@ -190,7 +190,7 @@ public:
         auto innerTopic = internal::PUB_SUB_PREFIX + topic;
 
         NAO_LOCK_GUARD lk(send_recv_mutex_);
-        auto           message = UAllocator::safeMallocTemplateNObject<DMessage<TImpl>>(size);
+        auto           message = NAllocator::safeMallocTemplateNObject<DMessage<TImpl>>(size);
         NAO_LOCK_GUARD lock(bind_mutex_);
         NIndex         connId = (++cur_conn_id_);
         auto           result = pub_sub_message_map_.find(innerTopic);

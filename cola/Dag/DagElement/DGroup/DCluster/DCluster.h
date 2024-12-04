@@ -1,12 +1,12 @@
 
 /**
- * @FilePath     : /cola/src/Dag/DagElement/DGroup/DCluster/DCluster.h
+ * @FilePath     : /cola/cola/Dag/DagElement/DGroup/DCluster/DCluster.h
  * @Description  : 实现多个element，线性执行的功能
  * @Author       : naonao
  * @Date         : 2024-06-26 15:25:46
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-28 09:48:05
+ * @LastEditTime : 2024-12-04 14:40:53
  **/
 #ifndef NAO_DCLUSTER_H
 #define NAO_DCLUSTER_H
@@ -31,7 +31,7 @@ private:
 
     friend class DPipeline;
     friend class DDynamicEngine;
-    friend class UAllocator;
+    friend class NAllocator;
 };
 
 NAO_NAMESPACE_END

@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/src/Dag/DagElement/_DEngine/DTopoEngine/DTopoEngine.h
+ * @FilePath     : /cola/cola/Dag/DagElement/_DEngine/DTopoEngine/DTopoEngine.h
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-06-26 11:45:52
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-26 11:45:52
+ * @LastEditTime : 2024-12-04 14:40:29
  **/
 #ifndef NAO_DTOPOENGINE_H
 #define NAO_DTOPOENGINE_H
@@ -30,7 +30,7 @@ protected:
 private:
     DElementPtrArr topo_elements_{};   // 拓扑排序后的
 
-    friend class UAllocator;
+    friend class NAllocator;
     friend class GElementManager;
 };
 

@@ -20,5 +20,6 @@
 #include "NStrDefine.h"
 #include "NStruct.h"
 #include "NValType.h"
+#include "NAllocator.h"
 
 #endif   // NAO_BASICINCLUDE_H

@@ -4,7 +4,7 @@
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-11-15 13:36:03
+ * @LastEditTime : 2024-12-04 14:48:23
  **/
 #ifndef NAO_UTHREADPRIMARY_H
 #define NAO_UTHREADPRIMARY_H
@@ -306,7 +306,7 @@ private:
     std::vector<NInt>              steal_targets_;         // 被偷的目标信息
 
     friend class UThreadPool;
-    friend class UAllocator;
+    friend class NAllocator;
 };
 
 using UThreadPrimaryPtr = UThreadPrimary*;

@@ -78,35 +78,27 @@ void tutorial_condition()
 
 
 //! 本例主要演示，多个pipeline同时执行的情况
-void tutorial_pipeline_1(nao::DPipelinePtr pipeline_1)
+std::future<NStatus> async_pipeline_1(nao::DPipelinePtr pipeline_1)
 {
-    if (nullptr == pipeline_1) {
-        return;
-    }
     nao::DElementPtr node1A, node1B, node1C = nullptr;
     pipeline_1->registerDElement<MyNode1>(&node1A, {}, "node1A");
     pipeline_1->registerDElement<MyNode1>(&node1B, {node1A}, "node1B");
     pipeline_1->registerDElement<MyNode1>(&node1C, {node1B}, "node1C");
-    pipeline_1->process(5);   // 执行n次，本例中 n=5
+     // 异步执行
+    return pipeline_1->asyncProcess(5);
 }
 
-void tutorial_pipeline_2(nao::DPipelinePtr pipeline_2)
+std::future<NStatus> async_pipeline_2(nao::DPipelinePtr pipeline_2)
 {
-    if (nullptr == pipeline_2) {
-        return;
-    }
     nao::DElementPtr node2A, node2B, node2C = nullptr;
     pipeline_2->registerDElement<MyNode2>(&node2A, {}, "node2A");
     pipeline_2->registerDElement<MyNode2>(&node2B, {node2A}, "node2B");
     pipeline_2->registerDElement<MyNode2>(&node2C, {node2A}, "node2C");
-    pipeline_2->process(3);
+    return pipeline_2->asyncProcess(3);
 }
 
-void tutorial_pipeline_3(nao::DPipelinePtr pipeline_3)
+std::future<NStatus> async_pipeline_3(nao::DPipelinePtr pipeline_3)
 {
-    if (nullptr == pipeline_3) {
-        return;
-    }
     NStatus          status;
     nao::DElementPtr node3A, node3B, node3C, node3D = nullptr;
     nao::DElementPtr region = nullptr;
@@ -116,7 +108,7 @@ void tutorial_pipeline_3(nao::DPipelinePtr pipeline_3)
     node3D                  = pipeline_3->createDNode<MyNode1>(nao::DNodeInfo({node3B, node3C}, "node3D", 1));
     region                  = pipeline_3->createDGroup<nao::DRegion>({node3A, node3B, node3C, node3D});
     pipeline_3->registerDElement<nao::DRegion>(&region);
-    pipeline_3->process(2);
+    return pipeline_3->asyncProcess(2);
 }
 
 void tutorial_multi_pipeline()
@@ -144,12 +136,13 @@ void tutorial_multi_pipeline()
      * 经过上述的设置，pipeline1 和 pipeline2 共享同一个线程池，去调度其中的dag逻辑
      * pipeline3 没有设定，故使用自带的默认线程池完成自己的调度逻辑
      */
-    std::thread thd1 = std::thread(tutorial_pipeline_1, pipeline_1);
-    std::thread thd2 = std::thread(tutorial_pipeline_2, pipeline_2);
-    std::thread thd3 = std::thread(tutorial_pipeline_3, pipeline_3);
-    thd1.join();
-    thd2.join();
-    thd3.join();
+    auto result1 = async_pipeline_1(pipeline_1);
+    auto result2 = async_pipeline_2(pipeline_2);
+    auto result3 = async_pipeline_3(pipeline_3);
+
+    result1.wait();
+    result2.wait();
+    result3.wait();
     nao::DPipelineFactory::clear();
 }
 

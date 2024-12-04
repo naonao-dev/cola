@@ -4,7 +4,7 @@
  * @Author       : naonao
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-09-05 10:34:54
+ * @LastEditTime : 2024-12-04 14:49:30
  * @Copyright    :
  **/
 #ifndef NAO_UTILSDEFINE_H
@@ -20,7 +20,6 @@
 #endif
 
 #include "../NBasic/NBasicInclude.h"
-#include "UAllocator.h"
 #include "UtilsFunction.h"
 
 NAO_NAMESPACE_BEGIN

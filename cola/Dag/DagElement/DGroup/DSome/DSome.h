@@ -1,11 +1,11 @@
 /**
- * @FilePath     : /cola/src/Dag/DagElement/DGroup/DSome/DSome.h
+ * @FilePath     : /cola/cola/Dag/DagElement/DGroup/DSome/DSome.h
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-06-26 15:26:20
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-28 09:49:17
+ * @LastEditTime : 2024-12-04 14:42:15
 **/
 
 #ifndef NAO_DSOME_H
@@ -49,7 +49,7 @@ private:
 
     friend class DPipeline;
     friend class DDynamicEngine;
-    friend class UAllocator;
+    friend class NAllocator;
 };
 
 NAO_NAMESPACE_END

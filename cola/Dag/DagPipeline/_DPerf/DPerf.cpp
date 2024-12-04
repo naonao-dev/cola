@@ -50,7 +50,7 @@ NStatus DPerf::inject(DPipelinePtr pipeline)
          * 给其中的每个element，都添加这个切面信息
          * 这里是不需要考虑 delete perf_info_的，因为在 element结束的时候，会自动释放
          */
-        cur->perf_info_ = UAllocator::safeMallocNStruct<DPerfInfo>();
+        cur->perf_info_ = NAllocator::safeMallocNStruct<DPerfInfo>();
         cur->addDAspect<DPerfAspect<NFMSec, DPerfInfoPtr>>(now, cur->perf_info_);
     }
     NAO_FUNCTION_END

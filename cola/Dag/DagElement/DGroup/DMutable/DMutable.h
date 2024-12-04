@@ -1,11 +1,11 @@
 /**
- * @FilePath     : /cola/src/Dag/DagElement/DGroup/DMutable/DMutable.h
+ * @FilePath     : /cola/cola/Dag/DagElement/DGroup/DMutable/DMutable.h
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-06-26 15:26:03
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-26 16:14:13
+ * @LastEditTime : 2024-12-04 14:41:32
  **/
 #ifndef NAO_DMUTABLE_H
 #define NAO_DMUTABLE_H
@@ -49,7 +49,7 @@ private:
     DElementManagerPtr manager_ = nullptr;
 
     friend class DPipeline;
-    friend class UAllocator;
+    friend class NAllocator;
 };
 
 using DMutablePtr = DMutable*;

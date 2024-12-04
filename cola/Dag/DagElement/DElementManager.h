@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/src/Dag/DagElement/DElementManager.h
+ * @FilePath     : /cola/cola/Dag/DagElement/DElementManager.h
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-06-24 23:07:22
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-28 09:41:16
+ * @LastEditTime : 2024-12-04 14:43:25
  **/
 #ifndef NAO_DELEMENTMANAGER_H
 #define NAO_DELEMENTMANAGER_H
@@ -109,7 +109,7 @@ private:
     friend class DRegion;
     friend class DMutable;
     friend class DPerf;
-    friend class UAllocator;
+    friend class NAllocator;
 };
 
 using DElementManagerPtr = DElementManager*;

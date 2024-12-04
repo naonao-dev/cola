@@ -5,7 +5,7 @@
  * @Date         : 2024-06-26 15:11:36
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-09-05 14:41:53
+ * @LastEditTime : 2024-12-04 15:00:18
  **/
 #include "DGroup.h"
 
@@ -52,6 +52,8 @@ NStatus DGroup::addElement(DElementPtr element)
     NAO_ASSERT_NOT_NULL(element)
 
     this->group_elements_arr_.emplace_back(element);
+    element->belong_ = this;
+    element->addManagers(param_manager_, event_manager_);
     NAO_FUNCTION_END
 }
 

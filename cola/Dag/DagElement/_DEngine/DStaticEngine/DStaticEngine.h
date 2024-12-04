@@ -5,7 +5,7 @@
  * @Date         : 2024-08-12 13:47:20
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-08-12 13:47:20
+ * @LastEditTime : 2024-12-04 14:40:09
  * @Copyright (c) 2024 by G, All Rights Reserved.
 **/
 #ifndef NAO_DSTATICENGINE_H
@@ -26,7 +26,7 @@ protected:
 private:
     DElementPtrMat2D element_mat_ {};        // 解图后的elements信息
 
-    friend class UAllocator;
+    friend class NAllocator;
     friend class GElementManager;
 };
 

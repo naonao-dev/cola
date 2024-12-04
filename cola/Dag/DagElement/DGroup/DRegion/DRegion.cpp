@@ -70,6 +70,7 @@ NStatus DRegion::addElement(DElementPtr element)
     NAO_ASSERT_NOT_NULL(element, manager_)
 
     manager_->manager_elements_.emplace(element);
+    status = DGroup::addElement(element);
     NAO_FUNCTION_END
 }
 

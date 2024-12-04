@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/src/Dag/DagPipeline/_DSchedule/DSchedule.cpp
+ * @FilePath     : /cola/cola/Dag/DagPipeline/_DSchedule/DSchedule.cpp
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-06-28 10:22:18
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-28 10:22:18
+ * @LastEditTime : 2024-12-04 14:46:12
  **/
 #include "DSchedule.h"
 
@@ -21,7 +21,7 @@ NStatus DSchedule::init()
          * 如果是 shared 的数据，则不做任何操作
          */
         NAO_DELETE_PTR(unique_tp_)
-        unique_tp_ = UAllocator::safeMallocTemplateNObject<UThreadPool>(true, config_);
+        unique_tp_ = NAllocator::safeMallocTemplateNObject<UThreadPool>(true, config_);
     }
     else if (internal::DScheduleType::SHARED == type_) {
         NAO_ASSERT_NOT_NULL(shared_tp_)

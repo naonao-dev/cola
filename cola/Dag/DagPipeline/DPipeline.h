@@ -390,7 +390,7 @@ private:
     DElementRepository repository_;   // 记录创建的所有element的仓库
 
     friend class DPipelineFactory;
-    friend class UAllocator;
+    friend class NAllocator;
     friend class DPerf;
 };
 

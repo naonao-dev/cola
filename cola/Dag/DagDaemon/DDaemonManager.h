@@ -36,7 +36,7 @@ protected:
     NSize getSize() const final;
 
     friend class DPipeline;
-    friend class UAllocator;
+    friend class NAllocator;
     NAO_NO_ALLOWED_COPY(DDaemonManager)
 
 private:

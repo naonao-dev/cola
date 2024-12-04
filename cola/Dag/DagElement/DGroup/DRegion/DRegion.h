@@ -58,7 +58,7 @@ private:
     NAO_NO_ALLOWED_COPY(DRegion)
 
     friend class DPipeline;
-    friend class UAllocator;
+    friend class NAllocator;
     friend class DTrimOptimizer;
 };
 

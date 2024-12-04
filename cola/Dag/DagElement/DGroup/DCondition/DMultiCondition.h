@@ -42,7 +42,7 @@ private:
     NBool isSeparate(DElementCPtr a, DElementCPtr b) const final;
 
     friend class DPipeline;
-    friend class UAllocator;
+    friend class NAllocator;
 };
 
 NAO_NAMESPACE_END

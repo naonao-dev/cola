@@ -99,7 +99,7 @@ private:
     std::condition_variable cv_;
     std::mutex status_lock_;
 
-    friend class UAllocator;
+    friend class NAllocator;
 };
 
 NAO_NAMESPACE_END

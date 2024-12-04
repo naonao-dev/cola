@@ -30,7 +30,6 @@
 #include "ThreadPool/UThreadPoolInclude.h"
 #include "Timer/UTimerInclude.h"
 #include "Trie/UTrieInclude.h"
-#include "UAllocator.h"
 #include "UtilsDefine.h"
 
 

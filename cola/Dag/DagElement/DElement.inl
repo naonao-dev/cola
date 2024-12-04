@@ -40,7 +40,7 @@ DElementPtr DElement::addDAspect(Args... args)
         aspect_manager_ = NAO_SAFE_MALLOC_NOBJECT(DAspectManager)
     }
 
-    auto aspect = UAllocator::safeMallocTemplateNObject<TAspect>(std::forward<Args>(args)...);
+    auto aspect = NAllocator::safeMallocTemplateNObject<TAspect>(std::forward<Args>(args)...);
     aspect->setBelong(this);
     aspect_manager_->add(aspect);
     return this;

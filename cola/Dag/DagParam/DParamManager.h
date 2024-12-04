@@ -1,11 +1,11 @@
 ﻿/**
- * @FilePath     : /cola/src/Dag/DagParam/DParamManager.h
+ * @FilePath     : /cola/cola/Dag/DagParam/DParamManager.h
  * @Description  :
  * @Author       : naonao
  * @Date         : 2024-06-24 11:51:24
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-06-28 09:44:24
+ * @LastEditTime : 2024-12-04 14:45:15
  **/
 
 #ifndef NAO_DPARAMMANGER_H
@@ -86,7 +86,7 @@ private:
     std::mutex                                 mutex_;        // 创建param的时候上锁
 
     friend class DPipeline;
-    friend class UAllocator;
+    friend class NAllocator;
 };
 using DParamManagerPtr = DParamManager*;
 
