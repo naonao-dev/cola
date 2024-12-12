@@ -18,5 +18,6 @@
 #include "Math/VMathInclude.h"
 #include "Ml/VMlInclude.h"
 #include "Xml/VXml.h"
+#include "Cluster/VFlann.h"
 
 #endif   // NAO_VISIONINCLUDE_H
