@@ -4,3 +4,4 @@
 *.cpp text eol=native
 *.inl text eol=native
 *.in text eol=native
+*.cc text eol=native
