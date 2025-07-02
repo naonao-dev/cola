@@ -5,7 +5,7 @@
  * @Date         : 2024-07-18 19:51:49
  * @Version      : 0.0.1
  * @LastEditors  : naonao
- * @LastEditTime : 2024-09-25 12:42:33
+ * @LastEditTime : 2025-07-02 17:49:07
  **/
 #include "../Common/common.h"
 #include "../Common/config.h"
@@ -144,6 +144,28 @@ void test_base64()
     }
     fout.close();
 }
+
+void test_base64_3()
+{
+    std::cout << "current_path: " << CURRENT_PATH << std::endl;
+    std::string current_path = CURRENT_PATH;
+    std::string ok_string    = R"(F:\360MoveData\Users\Administrator\Documents\WXWork\1688856898799519\Cache\Image\2025-07\b.bmp)";
+    nao::NAO_ECHO("img path %s", ok_string.c_str());
+
+    cv::Mat temp= cv::imread(ok_string);
+    std::vector<int> param = std::vector<int>(2);
+	param[0] = cv::IMWRITE_JPEG_QUALITY;
+	param[1] = 80; // default(95) 0-100
+    std::vector<unsigned char> buff;
+	cv::imencode(".jpg", temp, buff, param);
+
+    std::string imgBase64 = nao::UBase64::enCode(reinterpret_cast<const char*>(buff.data()), buff.size());   // 编码
+    std::cout << "img base64 encode data:" << imgBase64<< std::endl;
+    std::cout << "img base64 encode size:" << imgBase64.size() << std::endl;
+    std::string imgdecode64 = nao::UBase64::deCode(imgBase64);   // 解码
+    std::cout << "img decode size:" << imgdecode64.size() << std::endl;
+
+}
 int main()
 {
     printf("----------------- svm -----------------\n");
@@ -154,5 +176,6 @@ int main()
     test_pca_read();
     printf("----------------- test_base64 -----------------\n");
     test_base64();
+    //test_base64_3();
     return 0;
 }
